@@ -1,0 +1,10 @@
+# Các thư mục rác khi biên dịch code
+bin/
+obj/
+.vs/
+
+
+*.mdf
+*.xlsx
+
+# Nếu bạn có file chứa chuỗi kết nối database riêng biệt (ví dụ appsettings.json)
