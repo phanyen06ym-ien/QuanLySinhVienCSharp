@@ -72,7 +72,6 @@
             this.btnLuuDiem = new System.Windows.Forms.Button();
             this.btnTaiLai = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnThoat = new System.Windows.Forms.Button();
             this.tabDangXuatGV.SuspendLayout();
             this.tabTTCNGV.SuspendLayout();
             this.grbHSGV.SuspendLayout();
@@ -134,6 +133,7 @@
             this.grbHSGV.TabIndex = 1;
             this.grbHSGV.TabStop = false;
             this.grbHSGV.Text = "Hồ Sơ Giảng Viên";
+            this.grbHSGV.Enter += new System.EventHandler(this.grbHSGV_Enter);
             // 
             // lblMaKhoa
             // 
@@ -577,24 +577,11 @@
             this.tabPage1.UseVisualStyleBackColor = true;
             this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
             // 
-            // btnThoat
-            // 
-            this.btnThoat.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThoat.Location = new System.Drawing.Point(1520, 1037);
-            this.btnThoat.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnThoat.Name = "btnThoat";
-            this.btnThoat.Size = new System.Drawing.Size(170, 49);
-            this.btnThoat.TabIndex = 1;
-            this.btnThoat.Text = "Thoát";
-            this.btnThoat.UseVisualStyleBackColor = true;
-            this.btnThoat.Click += new System.EventHandler(this.btnThoat_Click);
-            // 
             // FormGiangVien
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1749, 1050);
-            this.Controls.Add(this.btnThoat);
             this.Controls.Add(this.tabDangXuatGV);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FormGiangVien";
@@ -621,7 +608,6 @@
         private System.Windows.Forms.TabPage tabTTCNGV;
         private System.Windows.Forms.TabPage tabLopPhuTrach;
         private System.Windows.Forms.TabPage tabNhap_Sua_Diem;
-        private System.Windows.Forms.Button btnThoat;
         private System.Windows.Forms.GroupBox grbHSGV;
         private System.Windows.Forms.Label lblMaKhoa;
         private System.Windows.Forms.Label lblDiaChi;

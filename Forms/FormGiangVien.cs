@@ -12,9 +12,10 @@ namespace QuanLySinhVienCSharp.Forms
 
         string maGV = "GV01";
 
-        public FormGiangVien()
+        public FormGiangVien(string maGV)
         {
             InitializeComponent();
+            this.maGV = maGV;
         }
 
         private void FormGiangVien_Load(object sender, EventArgs e)
@@ -74,7 +75,7 @@ namespace QuanLySinhVienCSharp.Forms
             {
                 string maSV = txtMaSV.Text.Trim();
                 string maHP = txtMaHP.Text.Trim();
-                string hocKy = cboHocKy.Text; // Giữ nguyên Học kỳ như bạn muốn
+                int hocKy = int.Parse(cboHocKy.Text);
                 string namHoc = txtNamHoc.Text.Trim();
 
                 double diemCC = double.Parse(txtCC.Text);
@@ -82,15 +83,17 @@ namespace QuanLySinhVienCSharp.Forms
                 double diemGK = double.Parse(txtGK.Text);
                 double diemCK = double.Parse(txtCK.Text);
 
-                if (diemService.SaveOrUpdate(maSV, maHP, hocKy, namHoc, diemCC, diemBT, diemGK, diemCK))
+                bool result = diemService.NhapDiem(maSV, maHP, hocKy, namHoc, diemCC, diemBT, diemGK, diemCK);
+
+                if (result)
                 {
-                    MessageBox.Show("Lưu dữ liệu thành công!");
-                    dgvDiem.DataSource = diemService.GetAll(); 
+                    MessageBox.Show("Nhập điểm thành công!");
+                    dgvDiem.DataSource = diemService.GetAll();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi nhập liệu: " + ex.Message);
+                MessageBox.Show("Lỗi: " + ex.Message);
             }
         }
 
@@ -137,6 +140,11 @@ namespace QuanLySinhVienCSharp.Forms
                     tabDangXuatGV.SelectedIndex = 0;
                 }
             }
+        }
+
+        private void grbHSGV_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

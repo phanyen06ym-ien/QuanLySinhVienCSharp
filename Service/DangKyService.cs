@@ -14,9 +14,9 @@ namespace QuanLySinhVienCSharp.Services
             {
                 conn.Open();
 
-                string q = "INSERT INTO DANGKY VALUES (@MaSV,@MaHP,@HocKy,@NamHoc)";
+                SqlCommand cmd = new SqlCommand("dbo.spDangKyHoc", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                SqlCommand cmd = new SqlCommand(q, conn);
                 cmd.Parameters.AddWithValue("@MaSV", dk.MaSV);
                 cmd.Parameters.AddWithValue("@MaHP", dk.MaHP);
                 cmd.Parameters.AddWithValue("@HocKy", dk.HocKy);
@@ -26,7 +26,7 @@ namespace QuanLySinhVienCSharp.Services
             }
         }
 
-        
+
 
         public DataTable GetByMaSV(string maSV)
         {

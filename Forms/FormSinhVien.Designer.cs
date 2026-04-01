@@ -65,7 +65,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.dgvKetQua = new System.Windows.Forms.DataGridView();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnThoat = new System.Windows.Forms.Button();
             this.tabDangXuatSV.SuspendLayout();
             this.tabTTCNSV.SuspendLayout();
             this.grbHSSV.SuspendLayout();
@@ -436,10 +435,10 @@
             // btnLamMoi
             // 
             this.btnLamMoi.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLamMoi.Location = new System.Drawing.Point(759, 846);
+            this.btnLamMoi.Location = new System.Drawing.Point(759, 834);
             this.btnLamMoi.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnLamMoi.Name = "btnLamMoi";
-            this.btnLamMoi.Size = new System.Drawing.Size(182, 38);
+            this.btnLamMoi.Size = new System.Drawing.Size(182, 45);
             this.btnLamMoi.TabIndex = 2;
             this.btnLamMoi.Text = "Làm Mới";
             this.btnLamMoi.UseVisualStyleBackColor = true;
@@ -523,23 +522,11 @@
             this.tabPage1.Text = "Đăng Xuất";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // btnThoat
-            // 
-            this.btnThoat.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnThoat.Location = new System.Drawing.Point(1480, 986);
-            this.btnThoat.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnThoat.Name = "btnThoat";
-            this.btnThoat.Size = new System.Drawing.Size(182, 65);
-            this.btnThoat.TabIndex = 1;
-            this.btnThoat.Text = "Thoát";
-            this.btnThoat.UseVisualStyleBackColor = true;
-            // 
             // FormSinhVien
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1749, 1050);
-            this.Controls.Add(this.btnThoat);
             this.Controls.Add(this.tabDangXuatSV);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FormSinhVien";
@@ -576,7 +563,6 @@
         private System.Windows.Forms.Label lblSDT;
         private System.Windows.Forms.Label lblNgaySinh;
         private System.Windows.Forms.Label lblTenSV;
-        private System.Windows.Forms.Button btnThoat;
         private System.Windows.Forms.Label lblKH;
         private System.Windows.Forms.Label lblYear;
         private System.Windows.Forms.Label lblML;

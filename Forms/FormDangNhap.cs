@@ -48,7 +48,7 @@ namespace QuanLySinhVienCSharp.Forms
             }
             else if (role == "GV")
             {
-                f = new FormGiangVien();
+                f = new FormGiangVien(user);
             }
 
             if (f != null)
@@ -60,6 +60,21 @@ namespace QuanLySinhVienCSharp.Forms
         }
 
         private void FormDangNhap_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnThoat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtTaiKhoan_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtMatKhau_TextChanged(object sender, EventArgs e)
         {
 
         }

@@ -100,9 +100,9 @@ namespace QuanLySinhVien
             this.panel4 = new System.Windows.Forms.Panel();
             this.dgvHocPhan = new System.Windows.Forms.DataGridView();
             this.tabBaoCao = new System.Windows.Forms.TabPage();
-            this.btnXuatExcel = new System.Windows.Forms.Button();
-            this.dgvBaoCao = new System.Windows.Forms.DataGridView();
             this.btnTaiDuLieu = new System.Windows.Forms.Button();
+            this.dgvBaoCao = new System.Windows.Forms.DataGridView();
+            this.btnXuatExcel = new System.Windows.Forms.Button();
             this.tabDangXuatAD = new System.Windows.Forms.TabPage();
             this.tabDangXuat.SuspendLayout();
             this.tabQLTK.SuspendLayout();
@@ -155,6 +155,7 @@ namespace QuanLySinhVien
             this.tabQLTK.TabIndex = 0;
             this.tabQLTK.Text = "Quản Lý Tài Khoản";
             this.tabQLTK.UseVisualStyleBackColor = true;
+            this.tabQLTK.Click += new System.EventHandler(this.tabQLTK_Click);
             // 
             // btnTaiLaiTK
             // 
@@ -562,6 +563,7 @@ namespace QuanLySinhVien
             this.btnTaiLaiGV.TabIndex = 21;
             this.btnTaiLaiGV.Text = "Tải Lại";
             this.btnTaiLaiGV.UseVisualStyleBackColor = true;
+            this.btnTaiLaiGV.Click += new System.EventHandler(this.btnTaiLaiGV_Click);
             // 
             // btnXoaGV
             // 
@@ -900,16 +902,15 @@ namespace QuanLySinhVien
             this.tabBaoCao.Text = "Báo Cáo";
             this.tabBaoCao.UseVisualStyleBackColor = true;
             // 
-            // btnXuatExcel
+            // btnTaiDuLieu
             // 
-            this.btnXuatExcel.Location = new System.Drawing.Point(986, 68);
-            this.btnXuatExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnXuatExcel.Name = "btnXuatExcel";
-            this.btnXuatExcel.Size = new System.Drawing.Size(159, 49);
-            this.btnXuatExcel.TabIndex = 3;
-            this.btnXuatExcel.Text = "Xuất Excel";
-            this.btnXuatExcel.UseVisualStyleBackColor = true;
-            this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
+            this.btnTaiDuLieu.Location = new System.Drawing.Point(742, 68);
+            this.btnTaiDuLieu.Name = "btnTaiDuLieu";
+            this.btnTaiDuLieu.Size = new System.Drawing.Size(159, 49);
+            this.btnTaiDuLieu.TabIndex = 5;
+            this.btnTaiDuLieu.Text = "Tải Lên";
+            this.btnTaiDuLieu.UseVisualStyleBackColor = true;
+            this.btnTaiDuLieu.Click += new System.EventHandler(this.button1_Click);
             // 
             // dgvBaoCao
             // 
@@ -922,15 +923,16 @@ namespace QuanLySinhVien
             this.dgvBaoCao.TabIndex = 4;
             this.dgvBaoCao.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
-            // btnTaiDuLieu
+            // btnXuatExcel
             // 
-            this.btnTaiDuLieu.Location = new System.Drawing.Point(742, 68);
-            this.btnTaiDuLieu.Name = "btnTaiDuLieu";
-            this.btnTaiDuLieu.Size = new System.Drawing.Size(159, 49);
-            this.btnTaiDuLieu.TabIndex = 5;
-            this.btnTaiDuLieu.Text = "Tải Lên";
-            this.btnTaiDuLieu.UseVisualStyleBackColor = true;
-            this.btnTaiDuLieu.Click += new System.EventHandler(this.button1_Click);
+            this.btnXuatExcel.Location = new System.Drawing.Point(986, 68);
+            this.btnXuatExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnXuatExcel.Name = "btnXuatExcel";
+            this.btnXuatExcel.Size = new System.Drawing.Size(159, 49);
+            this.btnXuatExcel.TabIndex = 3;
+            this.btnXuatExcel.Text = "Xuất Excel";
+            this.btnXuatExcel.UseVisualStyleBackColor = true;
+            this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
             // 
             // tabDangXuatAD
             // 

@@ -1,5 +1,6 @@
 ﻿using QuanLySinhVienCSharp.Models;
 using QuanLySinhVienCSharp.Service;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -17,27 +18,43 @@ namespace QuanLySinhVienCSharp.Services
                 return dt;
             }
         }
+        public DataTable GetById(string maGV)
+        {
+            using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+            {
+                string sql = "SELECT * FROM GiangVien WHERE MaGV = @ma";
+                SqlDataAdapter da = new SqlDataAdapter(sql, conn);
+                da.SelectCommand.Parameters.AddWithValue("@ma", maGV);
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
 
         public bool Add(GiangVien gv)
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                string sql = @"INSERT INTO GiangVien
-            (MaGV, HoTen, GioiTinh, DiaChi, Email, MaKhoa)
-            VALUES (@MaGV,@HoTen,@GT,@DC,@Email,@MaKhoa)";
+                    SqlCommand cmd = new SqlCommand("sp_ThemGiangVien", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@MaGV", gv.MaGV);
+                    cmd.Parameters.AddWithValue("@HoTen", gv.HoTen);
+                    cmd.Parameters.AddWithValue("@GioiTinh", gv.GioiTinh);
+                    cmd.Parameters.AddWithValue("@DiaChi", gv.DiaChi);
+                    cmd.Parameters.AddWithValue("@Email", gv.Email);
+                    cmd.Parameters.AddWithValue("@MaKhoa", gv.MaKhoa);
 
-                SqlCommand cmd = new SqlCommand(sql, conn);
-
-                cmd.Parameters.AddWithValue("@MaGV", gv.MaGV);
-                cmd.Parameters.AddWithValue("@HoTen", gv.HoTen);
-                cmd.Parameters.AddWithValue("@GT", gv.GioiTinh);
-                cmd.Parameters.AddWithValue("@DC", gv.DiaChi);
-                cmd.Parameters.AddWithValue("@Email", gv.Email);
-                cmd.Parameters.AddWithValue("@MaKhoa", gv.MaKhoa);
-
-                return cmd.ExecuteNonQuery() > 0;
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Lỗi thêm giảng viên: " + ex.Message);
+                }
             }
         }
 
@@ -45,23 +62,25 @@ namespace QuanLySinhVienCSharp.Services
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                string sql = @"UPDATE GiangVien SET
-            HoTen=@HoTen, GioiTinh=@GT, DiaChi=@DC,
-            Email=@Email, MaKhoa=@MaKhoa
-            WHERE MaGV=@MaGV";
+                    SqlCommand cmd = new SqlCommand("sp_SuaGiangVien", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@MaGV", gv.MaGV);
+                    cmd.Parameters.AddWithValue("@HoTen", gv.HoTen);
+                    cmd.Parameters.AddWithValue("@GioiTinh", gv.GioiTinh);
+                    cmd.Parameters.AddWithValue("@DiaChi", gv.DiaChi);
+                    cmd.Parameters.AddWithValue("@Email", gv.Email);
+                    cmd.Parameters.AddWithValue("@MaKhoa", gv.MaKhoa);
 
-                SqlCommand cmd = new SqlCommand(sql, conn);
-
-                cmd.Parameters.AddWithValue("@MaGV", gv.MaGV);
-                cmd.Parameters.AddWithValue("@HoTen", gv.HoTen);
-                cmd.Parameters.AddWithValue("@GT", gv.GioiTinh);
-                cmd.Parameters.AddWithValue("@DC", gv.DiaChi);
-                cmd.Parameters.AddWithValue("@Email", gv.Email);
-                cmd.Parameters.AddWithValue("@MaKhoa", gv.MaKhoa);
-
-                return cmd.ExecuteNonQuery() > 0;
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Lỗi cập nhật giảng viên: " + ex.Message);
+                }
             }
         }
 
@@ -69,29 +88,21 @@ namespace QuanLySinhVienCSharp.Services
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                SqlCommand cmd = new SqlCommand(
-                    "DELETE FROM GiangVien WHERE MaGV=@MaGV", conn);
+                    SqlCommand cmd = new SqlCommand("sp_XoaGiangVien", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@MaGV", maGV);
+                    cmd.Parameters.AddWithValue("@MaGV", maGV);
 
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
-        public DataTable GetById(string maGV)
-        {
-            using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
-            {
-                SqlDataAdapter da = new SqlDataAdapter(
-                    "SELECT * FROM GiangVien WHERE MaGV=@MaGV", conn);
-
-                da.SelectCommand.Parameters.AddWithValue("@MaGV", maGV);
-
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Lỗi xóa giảng viên: " + ex.Message);
+                }
             }
         }
         public DataTable GetLopPhuTrach(string maGV)

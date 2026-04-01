@@ -1,10 +1,12 @@
 ﻿using QuanLySinhVienCSharp.Service;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace QuanLySinhVienCSharp.Services
 {
@@ -14,18 +16,31 @@ namespace QuanLySinhVienCSharp.Services
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                conn.Open();
+                try
+                {
+                    conn.Open();
 
-                string q = @"SELECT VaiTro 
-                         FROM TaiKhoan 
-                         WHERE TenDangNhap=@u AND MatKhau=@p";
+                    SqlCommand cmd = new SqlCommand("sp_Login", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                SqlCommand cmd = new SqlCommand(q, conn);
-                cmd.Parameters.AddWithValue("@u", user);
-                cmd.Parameters.AddWithValue("@p", pass);
+                    cmd.Parameters.AddWithValue("@TenDangNhap", user.Trim());
+                    cmd.Parameters.AddWithValue("@MatKhau", pass.Trim());
 
-                var result = cmd.ExecuteScalar();
-                return result?.ToString();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return reader["VaiTro"].ToString();
+                        }
+                    }
+
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi đăng nhập: " + ex.Message);
+                    return null;
+                }
             }
         }
     }

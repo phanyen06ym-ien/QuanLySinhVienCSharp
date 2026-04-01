@@ -1,5 +1,6 @@
 ﻿using QuanLySinhVienCSharp.Models;
 using QuanLySinhVienCSharp.Service;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -53,25 +54,32 @@ namespace QuanLySinhVienCSharp.Services
             {
                 conn.Open();
                 SqlTransaction trans = conn.BeginTransaction();
+
                 try
                 {
-                    string sqlDiem = "DELETE FROM Diem WHERE MaHP = @ma";
-                    SqlCommand cmdDiem = new SqlCommand(sqlDiem, conn, trans);
+                    SqlCommand cmdDiem = new SqlCommand(
+                        "DELETE FROM DIEM WHERE MaHP = @ma", conn, trans);
                     cmdDiem.Parameters.AddWithValue("@ma", maHP);
                     cmdDiem.ExecuteNonQuery();
 
-                    string sqlHP = "DELETE FROM HocPhan WHERE MaHP = @ma";
-                    SqlCommand cmdHP = new SqlCommand(sqlHP, conn, trans);
+                    SqlCommand cmdDangKy = new SqlCommand(
+                        "DELETE FROM DANGKY WHERE MaHP = @ma", conn, trans);
+                    cmdDangKy.Parameters.AddWithValue("@ma", maHP);
+                    cmdDangKy.ExecuteNonQuery();
+
+                    SqlCommand cmdHP = new SqlCommand(
+                        "DELETE FROM HOCPHAN WHERE MaHP = @ma", conn, trans);
                     cmdHP.Parameters.AddWithValue("@ma", maHP);
 
                     int result = cmdHP.ExecuteNonQuery();
+
                     trans.Commit();
                     return result > 0;
                 }
-                catch
+                catch (Exception ex)
                 {
                     trans.Rollback();
-                    return false;
+                    throw new Exception("Lỗi xóa học phần: " + ex.Message);
                 }
             }
         }

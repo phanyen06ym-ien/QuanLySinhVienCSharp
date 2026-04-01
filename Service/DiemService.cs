@@ -13,11 +13,7 @@ namespace QuanLySinhVienCSharp.Services
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                string sql = @"SELECT D.MaSV, S.HoTen, D.MaHP, H.TenHP, D.HocKy, D.NamHoc,
-                              D.DiemChuyenCan, D.DiemBaiTap, D.DiemGiuaKy, D.DiemCuoiKy
-                       FROM DIEM D
-                       JOIN SINHVIEN S ON D.MaSV = S.MaSV
-                       JOIN HOCPHAN H ON D.MaHP = H.MaHP";
+                string sql = @"SELECT * FROM VIEW_BangDiem_Full";
 
                 SqlDataAdapter da = new SqlDataAdapter(sql, conn);
                 DataTable dt = new DataTable();
@@ -25,30 +21,47 @@ namespace QuanLySinhVienCSharp.Services
                 return dt;
             }
         }
-        public bool SaveOrUpdate(string maSV, string maHP, string hocKy, string namHoc, double diemCC, double diemBT, double diemGK, double diemCK)
+        public bool NhapDiem(string maSV, string maHP, int hocKy, string namHoc,
+                    double diemCC, double diemBT, double diemGK, double diemCK)
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 conn.Open();
-                string sql = @"IF EXISTS (SELECT 1 FROM DIEM WHERE MaSV=@MaSV AND MaHP=@MaHP)
-            BEGIN
-                UPDATE DIEM SET HocKy=@HK, NamHoc=@Nam, DiemChuyenCan=@CC, DiemBaiTap=@BT, DiemGiuaKy=@GK, DiemCuoiKy=@CK
-                WHERE MaSV=@MaSV AND MaHP=@MaHP
-            END
-            ELSE
-            BEGIN
-                INSERT INTO DIEM (MaSV, MaHP, HocKy, NamHoc, DiemChuyenCan, DiemBaiTap, DiemGiuaKy, DiemCuoiKy)
-                VALUES (@MaSV, @MaHP, @HK, @Nam, @CC, @BT, @GK, @CK)
-            END";
-                SqlCommand cmd = new SqlCommand(sql, conn);
+
+                SqlCommand cmd = new SqlCommand("sp_NhapDiem", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
                 cmd.Parameters.AddWithValue("@MaSV", maSV);
                 cmd.Parameters.AddWithValue("@MaHP", maHP);
-                cmd.Parameters.AddWithValue("@HK", hocKy);
-                cmd.Parameters.AddWithValue("@Nam", namHoc);
-                cmd.Parameters.AddWithValue("@CC", diemCC);
-                cmd.Parameters.AddWithValue("@BT", diemBT);
-                cmd.Parameters.AddWithValue("@GK", diemGK);
-                cmd.Parameters.AddWithValue("@CK", diemCK);
+                cmd.Parameters.AddWithValue("@HocKy", hocKy);
+                cmd.Parameters.AddWithValue("@NamHoc", namHoc);
+                cmd.Parameters.AddWithValue("@DiemCC", diemCC);
+                cmd.Parameters.AddWithValue("@DiemBT", diemBT);
+                cmd.Parameters.AddWithValue("@DiemGK", diemGK);
+                cmd.Parameters.AddWithValue("@DiemCK", diemCK);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+        public bool SuaDiem(string maSV, string maHP, int hocKy, string namHoc,
+                   double diemCC, double diemBT, double diemGK, double diemCK)
+        {
+            using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+            {
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand("sp_SuaDiem", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@MaSV", maSV);
+                cmd.Parameters.AddWithValue("@MaHP", maHP);
+                cmd.Parameters.AddWithValue("@HocKy", hocKy);
+                cmd.Parameters.AddWithValue("@NamHoc", namHoc);
+                cmd.Parameters.AddWithValue("@DiemCC", diemCC);
+                cmd.Parameters.AddWithValue("@DiemBT", diemBT);
+                cmd.Parameters.AddWithValue("@DiemGK", diemGK);
+                cmd.Parameters.AddWithValue("@DiemCK", diemCK);
+
                 return cmd.ExecuteNonQuery() > 0;
             }
         }

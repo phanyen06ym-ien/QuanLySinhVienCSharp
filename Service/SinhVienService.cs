@@ -14,7 +14,7 @@ namespace QuanLySinhVienCSharp.Services
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 SqlDataAdapter da = new SqlDataAdapter(
-                    "SELECT MaSV, HoTen, GioiTinh, MaLop, SDT, DiaChi, NamThu, KhoaHoc, NgaySinh FROM SinhVien",
+                    "SELECT * FROM VIEW_SinhVien_FullInfo",
                     conn);
 
                 DataTable dt = new DataTable();
@@ -97,55 +97,73 @@ namespace QuanLySinhVienCSharp.Services
 
         public bool Add(SinhVien sv)
         {
-            using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+            try
             {
-                conn.Open();
+                using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+                {
+                    conn.Open();
 
-                string sql = @"INSERT INTO SinhVien
-            (MaSV, HoTen, GioiTinh, MaLop, SDT, DiaChi, NamThu, KhoaHoc, NgaySinh)
-            VALUES (@MaSV,@HoTen,@GioiTinh,@MaLop,@SDT,@DiaChi,@NamThu,@KhoaHoc,@NgaySinh)";
+                    SqlCommand cmd = new SqlCommand("sp_ThemSinhVien", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@MaSV", sv.MaSV.Trim());
+                    cmd.Parameters.AddWithValue("@HoTen", sv.HoTen);
+                    cmd.Parameters.AddWithValue("@GioiTinh", sv.GioiTinh);
+                    cmd.Parameters.AddWithValue("@NgaySinh", sv.NgaySinh);
+                    cmd.Parameters.AddWithValue("@MaLop", sv.MaLop);
+                    cmd.Parameters.AddWithValue("@SDT", sv.SDT);
+                    cmd.Parameters.AddWithValue("@DiaChi", sv.DiaChi);
+                    cmd.Parameters.AddWithValue("@NamThu", (object)sv.NamThu ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@KhoaHoc", sv.KhoaHoc);
 
-                cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = sv.MaSV;
-                cmd.Parameters.Add("@HoTen", SqlDbType.NVarChar).Value = sv.HoTen;
-                cmd.Parameters.Add("@GioiTinh", SqlDbType.NVarChar).Value = sv.GioiTinh;
-                cmd.Parameters.Add("@MaLop", SqlDbType.VarChar).Value = sv.MaLop;
-                cmd.Parameters.Add("@SDT", SqlDbType.VarChar).Value = sv.SDT;
-                cmd.Parameters.Add("@DiaChi", SqlDbType.NVarChar).Value = sv.DiaChi;
-                cmd.Parameters.Add("@NamThu", SqlDbType.Int).Value = (object)sv.NamThu ?? DBNull.Value;
-                cmd.Parameters.Add("@KhoaHoc", SqlDbType.VarChar).Value = sv.KhoaHoc;
-                cmd.Parameters.Add("@NgaySinh", SqlDbType.Date).Value = sv.NgaySinh;
-
-                return cmd.ExecuteNonQuery() > 0;
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Lỗi Database: " + ex.Message, "Thông báo lỗi");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Lỗi hệ thống: " + ex.Message);
+                return false;
             }
         }
 
         public bool Update(SinhVien sv)
         {
-            using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+            try
             {
-                conn.Open();
+                using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+                {
+                    conn.Open();
 
-                string sql = @"UPDATE SinhVien SET
-            HoTen=@HoTen, GioiTinh=@GioiTinh, MaLop=@MaLop,
-            SDT=@SDT, DiaChi=@DiaChi, NamThu=@NamThu,
-            KhoaHoc=@KhoaHoc, NgaySinh=@NgaySinh
-            WHERE MaSV=@MaSV";
+                    SqlCommand cmd = new SqlCommand("sp_SuaSinhVien", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@MaSV", sv.MaSV);
+                    cmd.Parameters.AddWithValue("@HoTen", sv.HoTen);
+                    cmd.Parameters.AddWithValue("@GioiTinh", sv.GioiTinh);
+                    cmd.Parameters.AddWithValue("@NgaySinh", sv.NgaySinh);
+                    cmd.Parameters.AddWithValue("@MaLop", sv.MaLop);
+                    cmd.Parameters.AddWithValue("@SDT", sv.SDT);
+                    cmd.Parameters.AddWithValue("@DiaChi", sv.DiaChi);
 
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@NamThu", (object)sv.NamThu ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@KhoaHoc", sv.KhoaHoc);
 
-                cmd.Parameters.AddWithValue("@MaSV", sv.MaSV);
-                cmd.Parameters.AddWithValue("@HoTen", sv.HoTen);
-                cmd.Parameters.AddWithValue("@GioiTinh", sv.GioiTinh);
-                cmd.Parameters.AddWithValue("@MaLop", sv.MaLop);
-                cmd.Parameters.AddWithValue("@SDT", sv.SDT);
-                cmd.Parameters.AddWithValue("@DiaChi", sv.DiaChi);
-                cmd.Parameters.AddWithValue("@NamThu", (object)sv.NamThu ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@KhoaHoc", sv.KhoaHoc);
-                cmd.Parameters.AddWithValue("@NgaySinh", sv.NgaySinh);
-
-                return cmd.ExecuteNonQuery() > 0;
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Lỗi cập nhật Database: " + ex.Message, "Thông báo");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Lỗi hệ thống: " + ex.Message);
+                return false;
             }
         }
 
@@ -154,16 +172,13 @@ namespace QuanLySinhVienCSharp.Services
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 conn.Open();
-                string sqlTK = "DELETE FROM TAIKHOAN WHERE MaSV = @ma";
-                SqlCommand cmdTK = new SqlCommand(sqlTK, conn);
-                cmdTK.Parameters.AddWithValue("@ma", maSV);
-                cmdTK.ExecuteNonQuery();
 
-                string sqlSV = "DELETE FROM SinhVien WHERE MaSV = @ma";
-                SqlCommand cmdSV = new SqlCommand(sqlSV, conn);
-                cmdSV.Parameters.AddWithValue("@ma", maSV);
+                SqlCommand cmd = new SqlCommand("sp_XoaSinhVien", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                return cmdSV.ExecuteNonQuery() > 0;
+                cmd.Parameters.AddWithValue("@MaSV", maSV);
+
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
     }

@@ -42,7 +42,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(98, 61);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 21);
+            this.label1.Size = new System.Drawing.Size(117, 32);
             this.label1.TabIndex = 0;
             this.label1.Text = "Tài Khoản";
             // 
@@ -51,7 +51,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(98, 135);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(79, 21);
+            this.label2.Size = new System.Drawing.Size(122, 32);
             this.label2.TabIndex = 1;
             this.label2.Text = "Mật khẩu ";
             // 
@@ -59,16 +59,18 @@
             // 
             this.txtTaiKhoan.Location = new System.Drawing.Point(236, 54);
             this.txtTaiKhoan.Name = "txtTaiKhoan";
-            this.txtTaiKhoan.Size = new System.Drawing.Size(288, 29);
+            this.txtTaiKhoan.Size = new System.Drawing.Size(288, 39);
             this.txtTaiKhoan.TabIndex = 2;
+            this.txtTaiKhoan.TextChanged += new System.EventHandler(this.txtTaiKhoan_TextChanged);
             // 
             // txtMatKhau
             // 
             this.txtMatKhau.Location = new System.Drawing.Point(236, 135);
             this.txtMatKhau.Name = "txtMatKhau";
-            this.txtMatKhau.Size = new System.Drawing.Size(288, 29);
+            this.txtMatKhau.Size = new System.Drawing.Size(288, 39);
             this.txtMatKhau.TabIndex = 3;
             this.txtMatKhau.UseSystemPasswordChar = true;
+            this.txtMatKhau.TextChanged += new System.EventHandler(this.txtMatKhau_TextChanged);
             // 
             // btnDangNhap
             // 
@@ -88,6 +90,7 @@
             this.btnThoat.TabIndex = 5;
             this.btnThoat.Text = "Thoát";
             this.btnThoat.UseVisualStyleBackColor = true;
+            this.btnThoat.Click += new System.EventHandler(this.btnThoat_Click);
             // 
             // openFileDialog1
             // 
@@ -95,7 +98,7 @@
             // 
             // FormDangNhap
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 326);
             this.Controls.Add(this.btnThoat);

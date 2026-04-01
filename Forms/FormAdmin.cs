@@ -48,7 +48,6 @@ namespace QuanLySinhVien
             dgvSinhVien.DataSource = svService.GetAll();
             dgvGiangVien.DataSource = gvService.GetAll();
             dgvHocPhan.DataSource = hpService.GetAll();
-            dgvTaiKhoan.DataSource = tkService.GetAll();
         }
         private void LoadLop()
         {
@@ -145,6 +144,7 @@ namespace QuanLySinhVien
         private void btnThemSV_Click(object sender, EventArgs e)
         {
             SinhVien sv = GetSV();
+
             if (sv == null)
             {
                 MessageBox.Show("Vui lòng nhập Mã Sinh Viên!");
@@ -154,11 +154,14 @@ namespace QuanLySinhVien
             if (svService.Add(sv))
             {
                 MessageBox.Show("Thêm sinh viên thành công!");
+
                 dgvSinhVien.DataSource = svService.GetAll();
+
+                dgvTaiKhoan.DataSource = tkService.GetAll();
             }
             else
             {
-                MessageBox.Show("Thêm thất bại! Có thể mã sinh viên đã tồn tại.");
+                MessageBox.Show("Thêm thất bại!");
             }
         }
 
@@ -278,16 +281,24 @@ namespace QuanLySinhVien
         private void btnThemGV_Click(object sender, EventArgs e)
         {
             GiangVien gv = GetGV();
-            if (gv == null) { MessageBox.Show("Vui lòng nhập Mã Giảng Viên!"); return; }
+
+            if (gv == null)
+            {
+                MessageBox.Show("Vui lòng nhập Mã Giảng Viên!");
+                return;
+            }
 
             if (gvService.Add(gv))
             {
-                MessageBox.Show("Thêm thành công!");
+                MessageBox.Show("Thêm giảng viên thành công!");
+
                 dgvGiangVien.DataSource = gvService.GetAll();
+
+                dgvTaiKhoan.DataSource = tkService.GetAll();
             }
             else
             {
-                MessageBox.Show("Thêm thất bại! Mã GV có thể đã tồn tại.");
+                MessageBox.Show("Thêm thất bại!");
             }
         }
 
@@ -323,22 +334,6 @@ namespace QuanLySinhVien
                 {
                     MessageBox.Show("Xóa thất bại! Giảng viên này có thể đang dạy các học phần.");
                 }
-            }
-        }
-
-        private void btnThemHP_Click(object sender, EventArgs e)
-        {
-            HocPhan hp = GetHocPhanInput();
-            if (hp == null) { MessageBox.Show("Vui lòng nhập Mã HP!"); return; }
-
-            if (hpService.Add(hp))
-            {
-                MessageBox.Show("Thêm học phần thành công!");
-                dgvHocPhan.DataSource = hpService.GetAll(); // Load lại bảng
-            }
-            else
-            {
-                MessageBox.Show("Thêm thất bại!");
             }
         }
 
@@ -379,7 +374,7 @@ namespace QuanLySinhVien
 
         private void btnTaiLaiTK_Click_1(object sender, EventArgs e)
         {
-
+            dgvTaiKhoan.DataSource = tkService.GetAll();
         }
 
         private void btnThemHP_Click_1(object sender, EventArgs e)
@@ -404,18 +399,8 @@ namespace QuanLySinhVien
 
         private void tabHocPhan_Click(object sender, EventArgs e)
         {
-            HocPhan hp = GetHocPhanInput();
-            if (hp == null) { MessageBox.Show("Vui lòng nhập Mã Học Phần!"); return; }
-
-            if (hpService.Add(hp))
-            {
-                MessageBox.Show("Thêm học phần thành công!");
-                dgvHocPhan.DataSource = hpService.GetAll();
-            }
-            else
-            {
-                MessageBox.Show("Thêm thất bại! Mã học phần có thể đã tồn tại.");
-            }
+            
+            
 
         }
 
@@ -525,6 +510,16 @@ namespace QuanLySinhVien
             {
                 this.Close(); 
             }
+        }
+
+        private void tabQLTK_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnTaiLaiGV_Click(object sender, EventArgs e)
+        {
+            dgvGiangVien.DataSource = gvService.GetAll();
         }
     }
 }
