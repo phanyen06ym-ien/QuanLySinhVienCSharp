@@ -441,6 +441,7 @@
             this.cboHocKy.Name = "cboHocKy";
             this.cboHocKy.Size = new System.Drawing.Size(180, 28);
             this.cboHocKy.TabIndex = 13;
+            this.cboHocKy.SelectedIndexChanged += new System.EventHandler(this.cboHocKy_SelectedIndexChanged);
             // 
             // lblCK
             // 
@@ -541,6 +542,7 @@
             this.dgvDiem.RowHeadersWidth = 62;
             this.dgvDiem.Size = new System.Drawing.Size(1732, 483);
             this.dgvDiem.TabIndex = 1;
+            this.dgvDiem.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDiem_CellContentClick);
             // 
             // btnLuuDiem
             // 

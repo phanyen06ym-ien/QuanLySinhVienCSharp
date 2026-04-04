@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QuanLySinhVienCSharp.Service
 {
-    internal class LopService
+    public class LopService
     {
         public DataTable GetAll()
         {

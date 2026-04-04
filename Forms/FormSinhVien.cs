@@ -25,12 +25,43 @@ namespace QuanLySinhVien
 
         private void FormSinhVien_Load(object sender, EventArgs e)
         {
-            // 1. Nạp thông tin cơ bản
             LoadThongTin();
             LoadComboHP();
+            LoadDangKy();
 
-            dgvDangKy.AutoGenerateColumns = true; // Cho phép tự tạo cột từ Database
-            dgvDangKy.DataSource = null;           // Xóa sạch nguồn cũ để reset
+            dgvKetQua.DataSource = svService.GetBangDiemTheoSV(this.maSV.Trim());
+        }
+        private void LoadThongTin()
+        {
+            DataTable dt = svService.GetById(this.maSV);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow r = dt.Rows[0];
+
+                lblMSV.Text = r["MaSV"].ToString();
+                lblHoTen.Text = r["HoTen"].ToString();
+                lblGT.Text = r["GioiTinh"].ToString();
+
+                lblDate.Text = r["NgaySinh"] != DBNull.Value
+                    ? Convert.ToDateTime(r["NgaySinh"]).ToString("dd/MM/yyyy")
+                    : "";
+
+                lblNumber.Text = r["SDT"].ToString();
+                lblDC.Text = r["DiaChi"].ToString();
+                lblML.Text = r["TenLop"].ToString();
+                lblKH.Text = r["TenKhoa"].ToString();
+
+                lblYear.Text = r["NamThu"] != DBNull.Value
+                    ? r["NamThu"].ToString()
+                    : "";
+            }
+        }
+
+        private void LoadDangKy()
+        {
+            dgvDangKy.AutoGenerateColumns = true;
+            dgvDangKy.DataSource = null;
 
             DataTable dtDK = svService.GetHocPhanDaDangKy(this.maSV.Trim());
 
@@ -46,50 +77,30 @@ namespace QuanLySinhVien
 
                 dgvDangKy.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
-
-            dgvKetQua.DataSource = svService.GetBangDiemTheoSV(this.maSV.Trim());
         }
-        private void LoadThongTin()
-        {
-            DataTable dt = svService.GetById(this.maSV);
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                DataRow r = dt.Rows[0];
-                lblMSV.Text = r["MaSV"].ToString();
-                lblHoTen.Text = r["HoTen"].ToString(); // Label tên SV
-                lblGT.Text = r["GioiTinh"].ToString();
-                lblDate.Text = r["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(r["NgaySinh"]).ToString("dd/MM/yyyy") : "";
-                lblNumber.Text = r["SDT"].ToString();
-                lblDC.Text = r["DiaChi"].ToString();
-                lblML.Text = r["TenLop"].ToString();   // Hiện tên lớp thay vì mã
-                lblKH.Text = r["TenKhoa"].ToString();  // Hiện tên khoa
-                lblYear.Text = r["NamThu"].ToString();
-            }
-        }
-
 
         private void btnDangKy_Click(object sender, EventArgs e)
         {
             if (cboMaHP.SelectedValue == null)
             {
-                MessageBox.Show("Vui lòng chọn học phần muốn đăng ký!");
+                MessageBox.Show("Vui lòng chọn học phần!");
                 return;
             }
+
             try
             {
                 var dk = new DangKy
                 {
                     MaSV = maSV,
                     MaHP = cboMaHP.SelectedValue.ToString(),
-                    HocKy = int.Parse(cboHocKy.Text),
+                    HocKy = int.TryParse(cboHocKy.Text, out int hk) ? hk : 1,
                     NamHoc = txtNamHoc.Text
                 };
 
                 if (dkService.DangKy(dk))
                 {
                     MessageBox.Show("Đăng ký thành công!");
-                    dgvDangKy.DataSource = svService.GetHocPhanDaDangKy(maSV);
-                    dgvDangKy.Refresh();
+                    LoadDangKy(); 
                 }
             }
             catch (Exception ex)
@@ -100,7 +111,9 @@ namespace QuanLySinhVien
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            FormSinhVien_Load(sender, e);
+            LoadThongTin();
+            LoadDangKy();
+            dgvKetQua.DataSource = svService.GetBangDiemTheoSV(this.maSV.Trim());
         }
 
         private void LoadComboHP()
@@ -110,8 +123,8 @@ namespace QuanLySinhVien
             if (dt != null && dt.Rows.Count > 0)
             {
                 cboMaHP.DataSource = dt;
-                cboMaHP.DisplayMember = "TenHP"; 
-                cboMaHP.ValueMember = "MaHP";   
+                cboMaHP.DisplayMember = "TenHP";
+                cboMaHP.ValueMember = "MaHP";
             }
 
             if (cboHocKy.Items.Count == 0)

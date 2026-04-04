@@ -3,13 +3,13 @@ using QuanLySinhVienCSharp.Service;
 using QuanLySinhVienCSharp.Services;
 using System;
 using System.Data;
-using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using OfficeOpenXml; 
 using System.IO;
 
 namespace QuanLySinhVien
 {
+    // ===== KHỞI TẠO =====
     public partial class FormAdmin : Form
     {
         TaiKhoanService tkService = new TaiKhoanService();
@@ -21,27 +21,20 @@ namespace QuanLySinhVien
         public FormAdmin()
         {
             InitializeComponent();
-            LoadAll();
         }
 
         private void FormAdmin_Load(object sender, EventArgs e)
         {
-            // 1. Load dữ liệu lên các bảng
             LoadAll();
-
-            // 2. Load danh sách lớp vào ComboBox
             LoadLop();
 
-            // 3. Khởi tạo các lựa chọn cố định
             cboGioiTinhSV.Items.Clear();
             cboGioiTinhSV.Items.AddRange(new string[] { "Nam", "Nữ" });
-            cboGioiTinhSV.SelectedIndex = 0;
 
             cboVaiTro.Items.Clear();
             cboVaiTro.Items.AddRange(new string[] { "SV", "GV", "ADMIN" });
-            cboVaiTro.SelectedIndex = 0;
         }
-
+        // ===== DÙNG CHUNG =====
         private void LoadAll()
         {
             dgvTaiKhoan.DataSource = tkService.GetAll();
@@ -49,6 +42,7 @@ namespace QuanLySinhVien
             dgvGiangVien.DataSource = gvService.GetAll();
             dgvHocPhan.DataSource = hpService.GetAll();
         }
+
         private void LoadLop()
         {
             try
@@ -63,7 +57,6 @@ namespace QuanLySinhVien
 
                 txtMaLop.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 txtMaLop.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                // SỬA Ở ĐÂY: AutoCompleteCustomSource thay vì CustomSource
                 txtMaLop.AutoCompleteCustomSource = collection;
             }
             catch (Exception ex)
@@ -71,19 +64,12 @@ namespace QuanLySinhVien
                 MessageBox.Show("Lỗi tải lớp: " + ex.Message);
             }
         }
+
         private void LoadTabBaoCao()
         {
             try
             {
-                DataTable dt = svService.GetBangDiemChiTiet();
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    dgvBaoCao.DataSource = dt;
-                }
-                else
-                {
-                    MessageBox.Show("Không có dữ liệu bảng điểm!");
-                }
+                dgvBaoCao.DataSource = svService.GetBangDiemChiTiet();
             }
             catch (Exception ex)
             {
@@ -114,57 +100,38 @@ namespace QuanLySinhVien
                 KhoaHoc = txtKhoaHoc.Text.Trim()
             };
         }
-        private GiangVien GetGV()
+        private void ClearSVForm()
         {
-            if (string.IsNullOrWhiteSpace(txtMaGV.Text)) return null;
-
-            return new GiangVien
-            {
-                MaGV = txtMaGV.Text.Trim(),
-                HoTen = txtHoTenGV.Text.Trim(),
-                GioiTinh = cboGioiTinhGV.Text,
-                DiaChi = txtDiaChiGV.Text.Trim(),
-                Email = txtEmailGV.Text.Trim(),
-                MaKhoa = txtMaKhoaGV.Text.Trim()
-            };
+            txtMaSV.Clear();
+            txtHoTen.Clear();
+            txtNgaySinh.Clear();
+            txtSDT.Clear();
+            txtDiaChi.Clear();
+            txtMaLop.Clear();
+            txtNamThu.Clear();
+            txtKhoaHoc.Clear();
         }
-        private HocPhan GetHocPhanInput()
-        {
-            if (string.IsNullOrWhiteSpace(txtMaHP.Text)) return null;
-
-            return new HocPhan
-            {
-                MaHP = txtMaHP.Text.Trim(),
-                TenHP = txtTenHP.Text.Trim(),
-                TinChi = int.TryParse(txtSoTinChi.Text, out var n) ? n : 0,
-                MaKhoa = txtMaKhoa.Text.Trim()
-            };
-        }
-
         private void btnThemSV_Click(object sender, EventArgs e)
         {
             SinhVien sv = GetSV();
 
-            if (sv == null)
+            if (sv == null || string.IsNullOrEmpty(sv.MaSV))
             {
-                MessageBox.Show("Vui lòng nhập Mã Sinh Viên!");
+                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!");
                 return;
             }
 
             if (svService.Add(sv))
             {
                 MessageBox.Show("Thêm sinh viên thành công!");
-
-                dgvSinhVien.DataSource = svService.GetAll();
-
-                dgvTaiKhoan.DataSource = tkService.GetAll();
+                LoadAll();
+                ClearSVForm();
             }
             else
             {
                 MessageBox.Show("Thêm thất bại!");
             }
         }
-
         private void btnSuaSV_Click(object sender, EventArgs e)
         {
             SinhVien sv = GetSV();
@@ -180,7 +147,6 @@ namespace QuanLySinhVien
                 MessageBox.Show("Cập nhật thất bại!");
             }
         }
-
         private void btnXoaSV_Click(object sender, EventArgs e)
         {
             string maSV = txtMaSV.Text.Trim();
@@ -203,79 +169,30 @@ namespace QuanLySinhVien
                 }
             }
         }
-
         #endregion
+        #region GIẢNG VIÊN
 
-        private void btnExit_Click(object sender, EventArgs e)
+        private GiangVien GetGV()
         {
-            if (MessageBox.Show("Thoát?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                this.Close();
-        }
-        private void btnTaiLaiTK_Click(object sender, EventArgs e)
-        {
-            dgvTaiKhoan.DataSource = tkService.GetAll();
-        }
+            if (string.IsNullOrWhiteSpace(txtMaGV.Text)) return null;
 
-        private void btnThemTK_Click_1(object sender, EventArgs e)
-        {
-            try
+            return new GiangVien
             {
-                string tenDN = txtTaiKhoan.Text.Trim();
-                string vaiTro = cboVaiTro.Text; // Phải là "SV", "GV" hoặc "ADMIN"
-                string matKhau = "123456";
-
-                if (string.IsNullOrEmpty(tenDN))
-                {
-                    MessageBox.Show("Vui lòng nhập tên tài khoản!");
-                    return;
-                }
-
-                string maSV = (vaiTro == "SV") ? tenDN : null;
-                string maGV = (vaiTro == "GV") ? tenDN : null;
-
-                if (tkService.Add(tenDN, matKhau, vaiTro, maSV, maGV))
-                {
-                    MessageBox.Show($"Thêm thành công tài khoản {vaiTro}!");
-                    dgvTaiKhoan.DataSource = tkService.GetAll();
-                    txtTaiKhoan.Clear();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi: " + ex.Message);
-            }
-
+                MaGV = txtMaGV.Text.Trim(),
+                HoTen = txtHoTenGV.Text.Trim(),
+                GioiTinh = cboGioiTinhGV.Text,
+                DiaChi = txtDiaChiGV.Text.Trim(),
+                Email = txtEmailGV.Text.Trim(),
+                MaKhoa = txtMaKhoaGV.Text.Trim()
+            };
         }
-
-        private void btnXoaTK_Click_1(object sender, EventArgs e)
+        private void ClearGVForm()
         {
-            if (dgvTaiKhoan.CurrentRow == null) return;
-
-            string tenDN = dgvTaiKhoan.CurrentRow.Cells["TenDangNhap"].Value.ToString();
-
-            if (MessageBox.Show($"Xóa tài khoản {tenDN}?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                if (tkService.Delete(tenDN))
-                {
-                    MessageBox.Show("Đã xóa!");
-                    dgvTaiKhoan.DataSource = tkService.GetAll();
-                }
-            }
-        }
-
-        private void cboMaLop_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabQLSV_Click(object sender, EventArgs e)
-        {
-
+            txtMaGV.Clear();
+            txtHoTenGV.Clear();
+            txtEmailGV.Clear();
+            txtDiaChiGV.Clear();
+            txtMaKhoaGV.Clear();
         }
 
         private void btnThemGV_Click(object sender, EventArgs e)
@@ -291,17 +208,14 @@ namespace QuanLySinhVien
             if (gvService.Add(gv))
             {
                 MessageBox.Show("Thêm giảng viên thành công!");
-
-                dgvGiangVien.DataSource = gvService.GetAll();
-
-                dgvTaiKhoan.DataSource = tkService.GetAll();
+                LoadAll();
+                ClearGVForm();
             }
             else
             {
                 MessageBox.Show("Thêm thất bại!");
             }
         }
-
         private void btnSuaGV_Click(object sender, EventArgs e)
         {
             GiangVien gv = GetGV();
@@ -317,7 +231,6 @@ namespace QuanLySinhVien
                 MessageBox.Show("Cập nhật thất bại! Kiểm tra lại Mã Khoa.");
             }
         }
-
         private void btnXoaGV_Click(object sender, EventArgs e)
         {
             string maGV = txtMaGV.Text.Trim();
@@ -336,47 +249,32 @@ namespace QuanLySinhVien
                 }
             }
         }
-
-        private void label1_Click(object sender, EventArgs e)
+        private void btnTaiLaiGV_Click(object sender, EventArgs e)
         {
-
+            dgvGiangVien.DataSource = gvService.GetAll();
         }
+        #endregion
 
-        private void txtMaKhoa_change(object sender, EventArgs e)
+        #region HỌC PHẦN
+        private HocPhan GetHocPhanInput()
         {
+            if (string.IsNullOrWhiteSpace(txtMaHP.Text)) return null;
 
-        }
-
-        private void btnXoaHP_Click(object sender, EventArgs e)
-        {
-            string maHP = txtMaHP.Text.Trim();
-            if (string.IsNullOrEmpty(maHP)) return;
-
-            if (MessageBox.Show("Xóa học phần này?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            return new HocPhan
             {
-                if (hpService.Delete(maHP))
-                {
-                    MessageBox.Show("Đã xóa!");
-                    dgvHocPhan.DataSource = hpService.GetAll();
-                }
-                else
-                {
-                    MessageBox.Show("Không thể xóa (Học phần này có thể đang có điểm sinh viên)!");
-                }
-            }
-
+                MaHP = txtMaHP.Text.Trim(),
+                TenHP = txtTenHP.Text.Trim(),
+                TinChi = int.TryParse(txtSoTinChi.Text, out var n) ? n : 0,
+                MaKhoa = txtMaKhoa.Text.Trim()
+            };
         }
-
-        private void txtMaKhoa_TextChanged(object sender, EventArgs e)
+        private void ClearHPForm()
         {
-
+            txtMaHP.Clear();
+            txtTenHP.Clear();
+            txtSoTinChi.Clear();
+            txtMaKhoa.Clear();
         }
-
-        private void btnTaiLaiTK_Click_1(object sender, EventArgs e)
-        {
-            dgvTaiKhoan.DataSource = tkService.GetAll();
-        }
-
         private void btnThemHP_Click_1(object sender, EventArgs e)
         {
             HocPhan hp = GetHocPhanInput();
@@ -389,31 +287,14 @@ namespace QuanLySinhVien
             if (hpService.Add(hp))
             {
                 MessageBox.Show("Thêm học phần thành công!");
-                dgvHocPhan.DataSource = hpService.GetAll();
+                LoadAll();
+                ClearHPForm();
             }
             else
             {
                 MessageBox.Show("Thêm thất bại! Kiểm tra lại Mã HP hoặc Mã Khoa có tồn tại không.");
             }
         }
-
-        private void tabHocPhan_Click(object sender, EventArgs e)
-        {
-            
-            
-
-        }
-
-        private void txtSoTinChi_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnTaiLaiHP_Click(object sender, EventArgs e)
-        {
-            dgvHocPhan.DataSource = hpService.GetAll();
-        }
-
         private void btnXoaHP_Click_1(object sender, EventArgs e)
         {
             string maHP = txtMaHP.Text.Trim();
@@ -440,14 +321,91 @@ namespace QuanLySinhVien
                 }
             }
         }
+        private void btnTaiLaiHP_Click(object sender, EventArgs e)
+        {
+            dgvHocPhan.DataSource = hpService.GetAll();
+        }
+        #endregion
 
+        #region TÀI KHOẢN
+        private void btnThemTK_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                string tenDN = txtTaiKhoan.Text.Trim();
+                string vaiTro = cboVaiTro.Text;
+                string matKhau = "123456";
+
+                if (string.IsNullOrEmpty(tenDN))
+                {
+                    MessageBox.Show("Nhập tài khoản!");
+                    return;
+                }
+
+                if (tkService.Exists(tenDN))
+                {
+                    MessageBox.Show("Tài khoản đã tồn tại!");
+                    return;
+                }
+
+                TaiKhoan tk = new TaiKhoan
+                {
+                    TenDangNhap = tenDN,
+                    MatKhau = matKhau,
+                    VaiTro = vaiTro,
+                    MaSV = vaiTro == "SV" ? tenDN : null,
+                    MaGV = vaiTro == "GV" ? tenDN : null
+                };
+
+                if (tkService.Add(tk))
+                {
+                    MessageBox.Show("Thêm tài khoản thành công!");
+
+                    txtTaiKhoan.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void btnXoaTK_Click_1(object sender, EventArgs e)
+        {
+            if (dgvTaiKhoan.CurrentRow == null) return;
+
+            string tenDN = dgvTaiKhoan.CurrentRow.Cells["TenDangNhap"].Value.ToString();
+
+            if (MessageBox.Show($"Xóa tài khoản {tenDN}?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                if (tkService.Delete(tenDN))
+                {
+                    MessageBox.Show("Đã xóa!");
+                    dgvTaiKhoan.DataSource = tkService.GetAll();
+                }
+            }
+        }
+        private void btnTaiLaiTK_Click_1(object sender, EventArgs e)
+        {
+            LoadAll();
+        }
+        #endregion
+
+        #region BÁO CÁO
+        private void button1_Click(object sender, EventArgs e)
+        {
+            LoadTabBaoCao();
+        }
         private void btnXuatExcel_Click(object sender, EventArgs e)
         {
-            DataTable dt = (DataTable)dgvBaoCao.DataSource;
-
-            if (dt == null || dt.Rows.Count == 0)
+            if (!(dgvBaoCao.DataSource is DataTable dt))
             {
-                MessageBox.Show("Vui lòng tải dữ liệu lên bảng trước khi xuất!");
+                MessageBox.Show("Không có dữ liệu để xuất!");
+                return;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                MessageBox.Show("Bảng dữ liệu rỗng!");
                 return;
             }
 
@@ -460,9 +418,10 @@ namespace QuanLySinhVien
                 try
                 {
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
                     using (ExcelPackage pck = new ExcelPackage())
                     {
-                        ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Danh sách");
+                        var ws = pck.Workbook.Worksheets.Add("Danh sách");
 
                         ws.Cells["A1"].LoadFromDataTable(dt, true);
 
@@ -475,51 +434,57 @@ namespace QuanLySinhVien
 
                         ws.Cells.AutoFitColumns();
 
-                        byte[] bin = pck.GetAsByteArray();
-                        File.WriteAllBytes(sfd.FileName, bin);
+                        File.WriteAllBytes(sfd.FileName, pck.GetAsByteArray());
                     }
-                    MessageBox.Show("Xuất file Excel thành công!");
+
+                    MessageBox.Show("Xuất Excel thành công!");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi khi xuất file: " + ex.Message);
+                    MessageBox.Show("Lỗi: " + ex.Message);
                 }
             }
         }
+        #endregion
+        #region ĐĂNG XUẤT
+        private void tabDangXuatAD_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                this.Close(); // quay về login
+            }
+        }
+        #endregion
+
+
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Thoát?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                this.Close();
+        }
+
+
+        private void txtMaKhoa_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void tabHocPhan_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtSoTinChi_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            LoadTabBaoCao();
-        }
-
-        private void tabDangXuatAD_Click(object sender, EventArgs e)
-        {
-            DialogResult rs = MessageBox.Show(
-            "Bạn có chắc muốn đăng xuất?",
-            "Xác nhận",
-            MessageBoxButtons.YesNo,
-            MessageBoxIcon.Question
-        );
-
-            if (rs == DialogResult.Yes)
-            {
-                this.Close(); 
-            }
-        }
-
-        private void tabQLTK_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnTaiLaiGV_Click(object sender, EventArgs e)
-        {
-            dgvGiangVien.DataSource = gvService.GetAll();
         }
     }
 }

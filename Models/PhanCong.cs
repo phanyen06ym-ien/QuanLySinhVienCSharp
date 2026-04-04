@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QuanLySinhVienCSharp.Models
 {
-    internal class PhanCong
+    public class PhanCong
     {
         public string MaGV { get; set; }
         public string MaHP { get; set; }

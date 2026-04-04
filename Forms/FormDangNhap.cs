@@ -20,53 +20,68 @@ namespace QuanLySinhVienCSharp.Forms
             string user = txtTaiKhoan.Text.Trim();
             string pass = txtMatKhau.Text.Trim();
 
-            if (user == "" || pass == "")
+            // 1. Kiểm tra rỗng
+            if (string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(pass))
             {
                 MessageBox.Show("Nhập đầy đủ thông tin!");
                 return;
             }
 
-            string role = auth.Login(user, pass);
-
-            if (role == null)
+            try
             {
-                MessageBox.Show("Sai tài khoản hoặc mật khẩu");
-                return;
+                // 2. Gọi service (đúng kiểu User)
+                var u = auth.Login(user, pass);
+
+                // 3. Kiểm tra login thất bại
+                if (u == null)
+                {
+                    MessageBox.Show("Sai tài khoản hoặc mật khẩu");
+                    return;
+                }
+
+                // 4. Lấy role
+                string role = u.VaiTro.ToUpper();
+
+                Form f = null;
+
+                // 5. Phân quyền mở form
+                if (role == "ADMIN")
+                {
+                    f = new FormAdmin();
+                }
+                else if (role == "SV")
+                {
+                    f = new FormSinhVien(u.MaSV); // ⚠️ FIX: truyền MaSV
+                }
+                else if (role == "GV")
+                {
+                    f = new FormGiangVien(u.MaGV); // ⚠️ FIX: truyền MaGV
+                }
+                else
+                {
+                    MessageBox.Show("Không xác định vai trò!");
+                    return;
+                }
+
+                // 6. Mở form
+                this.Hide();
+                f.ShowDialog();
+                this.Show();
             }
-
-            role = role.ToUpper();
-
-            Form f = null;
-
-            if (role == "ADMIN")
+            catch (Exception ex)
             {
-                f = new FormAdmin();
-            }
-            else if (role == "SV")
-            {
-                f = new FormSinhVien(user);
-            }
-            else if (role == "GV")
-            {
-                f = new FormGiangVien(user);
-            }
-
-            if (f != null)
-            {
-                this.Hide();        
-                f.ShowDialog();     
-                this.Show();        
+                MessageBox.Show("Lỗi hệ thống: " + ex.Message);
             }
         }
 
         private void FormDangNhap_Load(object sender, EventArgs e)
         {
-
+            this.AcceptButton = btnDangNhap;
         }
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
-
+            Application.Exit();
         }
 
         private void txtTaiKhoan_TextChanged(object sender, EventArgs e)

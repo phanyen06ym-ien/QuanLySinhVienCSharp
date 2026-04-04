@@ -1,5 +1,6 @@
 ﻿using QuanLySinhVienCSharp.Models;
 using QuanLySinhVienCSharp.Service;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,36 +15,65 @@ namespace QuanLySinhVienCSharp.Services
             {
                 conn.Open();
 
-                SqlCommand cmd = new SqlCommand("dbo.spDangKyHoc", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("spDangKyHoc", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("@MaSV", dk.MaSV);
-                cmd.Parameters.AddWithValue("@MaHP", dk.MaHP);
-                cmd.Parameters.AddWithValue("@HocKy", dk.HocKy);
-                cmd.Parameters.AddWithValue("@NamHoc", dk.NamHoc);
+                        cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = dk.MaSV;
+                        cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = dk.MaHP;
+                        cmd.Parameters.Add("@HocKy", SqlDbType.Int).Value = dk.HocKy;
+                        cmd.Parameters.Add("@NamHoc", SqlDbType.NVarChar).Value = dk.NamHoc;
 
-                return cmd.ExecuteNonQuery() > 0;
+                        cmd.ExecuteNonQuery(); // chỉ cần chạy OK là true
+                        return true;
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Lỗi đăng ký: " + ex.Message);
+                }
             }
         }
 
-
-
-        public DataTable GetByMaSV(string maSV)
+        public List<DangKy> GetByMaSV(string maSV)
         {
+            List<DangKy> list = new List<DangKy>();
+
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                string sql = @"SELECT dk.MaHP, hp.TenHP, dk.HocKy, dk.NamHoc
-                       FROM DANGKY dk
-                       JOIN HOCPHAN hp ON dk.MaHP = hp.MaHP
-                       WHERE dk.MaSV = @MaSV";
+                conn.Open();
 
-                SqlDataAdapter da = new SqlDataAdapter(sql, conn);
-                da.SelectCommand.Parameters.AddWithValue("@MaSV", maSV);
+                string sql = @"
+            SELECT dk.MaSV, hp.TenHP, dk.MaHP, dk.HocKy, dk.NamHoc, hp.TinChi
+            FROM DANGKY dk
+            JOIN HOCPHAN hp ON dk.MaHP = hp.MaHP
+            WHERE dk.MaSV = @MaSV";
 
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = maSV;
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            list.Add(new DangKy
+                            {
+                                MaSV = reader["MaSV"].ToString(),
+                                MaHP = reader["MaHP"].ToString(),
+                                TenHP = reader["TenHP"].ToString(),
+                                HocKy = (int)reader["HocKy"],
+                                NamHoc = reader["NamHoc"].ToString(),
+                                TinChi = (int)reader["TinChi"]
+                            });
+                        }
+                    }
+                }
             }
+
+            return list;
         }
     }
 }

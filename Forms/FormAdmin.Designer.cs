@@ -155,7 +155,6 @@ namespace QuanLySinhVien
             this.tabQLTK.TabIndex = 0;
             this.tabQLTK.Text = "Quản Lý Tài Khoản";
             this.tabQLTK.UseVisualStyleBackColor = true;
-            this.tabQLTK.Click += new System.EventHandler(this.tabQLTK_Click);
             // 
             // btnTaiLaiTK
             // 
@@ -285,7 +284,6 @@ namespace QuanLySinhVien
             this.tabQLSV.TabIndex = 1;
             this.tabQLSV.Text = "Quản Lý Sinh Viên";
             this.tabQLSV.UseVisualStyleBackColor = true;
-            this.tabQLSV.Click += new System.EventHandler(this.tabQLSV_Click);
             // 
             // txtMaLop
             // 
@@ -293,7 +291,6 @@ namespace QuanLySinhVien
             this.txtMaLop.Name = "txtMaLop";
             this.txtMaLop.Size = new System.Drawing.Size(125, 26);
             this.txtMaLop.TabIndex = 30;
-            this.txtMaLop.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // cboGioiTinhSV
             // 
@@ -769,7 +766,6 @@ namespace QuanLySinhVien
             this.label1.Size = new System.Drawing.Size(72, 20);
             this.label1.TabIndex = 11;
             this.label1.Text = "Mã Khoa";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // txtMaKhoa
             // 
