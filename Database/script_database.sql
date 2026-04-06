@@ -784,7 +784,7 @@ GO
 
 
 --TÀI KHOẢN
---[1]
+--[1] login
 CREATE OR ALTER PROCEDURE spLogin
     @TenDangNhap VARCHAR(20),
     @MatKhau NVARCHAR(100)
@@ -792,12 +792,29 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT *
-    FROM TAIKHOAN
-    WHERE TenDangNhap=@TenDangNhap
-      AND MatKhau=HASHBYTES('SHA2_256', CAST(@MatKhau AS NVARCHAR(MAX)))
-      AND TrangThai=1;
+    SELECT 
+        tk.TenDangNhap,
+        tk.VaiTro,
+        tk.MaSV,
+        tk.MaGV,
+        COALESCE(sv.HoTen, gv.HoTen) AS HoTen,
+
+        CASE 
+            WHEN tk.VaiTro = 'SV' THEN lh.MaKhoa
+            WHEN tk.VaiTro = 'GV' THEN gv.MaKhoa
+            ELSE NULL
+        END AS MaKhoa
+
+    FROM TAIKHOAN tk
+    LEFT JOIN SINHVIEN sv ON tk.MaSV = sv.MaSV
+    LEFT JOIN LOPHOC lh ON sv.MaLop = lh.MaLop
+    LEFT JOIN GIANGVIEN gv ON tk.MaGV = gv.MaGV
+
+    WHERE tk.TenDangNhap = @TenDangNhap
+      AND tk.MatKhau = HASHBYTES('SHA2_256', @MatKhau)
+      AND tk.TrangThai = 1;
 END;
+
 GO
   --[2] lấy thông tin user
 CREATE OR ALTER PROCEDURE spGetUserInfo
@@ -857,8 +874,8 @@ CREATE OR ALTER PROCEDURE spDoiMatKhau
 AS
 BEGIN
     UPDATE TAIKHOAN
-    SET MatKhau = HASHBYTES('SHA2_256', CAST(@MatKhauMoi AS NVARCHAR(MAX)))
-    WHERE TenDangNhap = @TenDangNhap;
+SET MatKhau = HASHBYTES('SHA2_256', @MatKhauMoi)
+WHERE TenDangNhap = @TenDangNhap
 END;
 GO
 --[5] xóa tài khoản 
