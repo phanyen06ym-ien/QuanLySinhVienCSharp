@@ -19,7 +19,8 @@ namespace QuanLySinhVienCSharp.Services
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@TenDangNhap", SqlDbType.NVarChar).Value = user.Trim();
+                        // FIX kiểu dữ liệu
+                        cmd.Parameters.Add("@TenDangNhap", SqlDbType.VarChar).Value = user.Trim();
                         cmd.Parameters.Add("@MatKhau", SqlDbType.NVarChar).Value = pass.Trim();
 
                         conn.Open();
@@ -34,8 +35,8 @@ namespace QuanLySinhVienCSharp.Services
                                     VaiTro = reader["VaiTro"]?.ToString(),
                                     MaSV = reader["MaSV"] == DBNull.Value ? null : reader["MaSV"].ToString(),
                                     MaGV = reader["MaGV"] == DBNull.Value ? null : reader["MaGV"].ToString(),
-                                    TenNguoiDung = reader["HoTen"]?.ToString(),
-                                    MaKhoa = reader["MaKhoa"]?.ToString() // <-- THÊM DÒNG NÀY
+                                    TenNguoiDung = reader["HoTen"] == DBNull.Value ? null : reader["HoTen"].ToString(),
+                                    MaKhoa = reader["MaKhoa"] == DBNull.Value ? null : reader["MaKhoa"].ToString()
                                 };
                             }
                         }
@@ -47,6 +48,7 @@ namespace QuanLySinhVienCSharp.Services
                 throw new Exception("Lỗi kết nối cơ sở dữ liệu: " + ex.Message);
             }
             return null;
+        
         }
 
         // ================= LẤY THÔNG TIN USER =================
@@ -57,7 +59,9 @@ namespace QuanLySinhVienCSharp.Services
                 using (SqlCommand cmd = new SqlCommand("spGetUserInfo", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@TenDangNhap", username.Trim());
+
+                    // FIX kiểu dữ liệu
+                    cmd.Parameters.Add("@TenDangNhap", SqlDbType.VarChar).Value = username.Trim();
 
                     conn.Open();
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -70,8 +74,8 @@ namespace QuanLySinhVienCSharp.Services
                                 VaiTro = reader["VaiTro"]?.ToString(),
                                 MaSV = reader["MaSV"] == DBNull.Value ? null : reader["MaSV"].ToString(),
                                 MaGV = reader["MaGV"] == DBNull.Value ? null : reader["MaGV"].ToString(),
-                                TenNguoiDung = reader["HoTen"]?.ToString(),
-                                MaKhoa = reader["MaKhoa"]?.ToString() 
+                                TenNguoiDung = reader["HoTen"] == DBNull.Value ? null : reader["HoTen"].ToString(),
+                                MaKhoa = reader["MaKhoa"] == DBNull.Value ? null : reader["MaKhoa"].ToString()
                             };
                         }
                     }
@@ -88,8 +92,9 @@ namespace QuanLySinhVienCSharp.Services
                 using (SqlCommand cmd = new SqlCommand("spDoiMatKhau", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@TenDangNhap", username.Trim());
-                    cmd.Parameters.AddWithValue("@MatKhauMoi", newPassword.Trim());
+
+                    cmd.Parameters.Add("@TenDangNhap", SqlDbType.VarChar).Value = username.Trim();
+                    cmd.Parameters.Add("@MatKhauMoi", SqlDbType.NVarChar).Value = newPassword.Trim();
 
                     conn.Open();
                     int result = cmd.ExecuteNonQuery();

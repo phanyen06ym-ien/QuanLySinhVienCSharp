@@ -10,7 +10,8 @@ namespace QuanLySinhVienCSharp.Service
 {
     public class DbHelper
     {
+        // Cập nhật Data Source để khớp với server trong ảnh của bạn
         public static string connStr =
-            @"Data Source=.\SQLEXPRESS;Initial Catalog=QuanLySinhVien;Integrated Security=True;TrustServerCertificate=True";
+            @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=QuanLySinhVien;Integrated Security=True;TrustServerCertificate=True";
     }
 }
