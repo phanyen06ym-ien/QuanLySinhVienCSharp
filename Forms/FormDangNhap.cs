@@ -15,65 +15,6 @@ namespace QuanLySinhVienCSharp.Forms
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string user = txtTaiKhoan.Text.Trim();
-            string pass = txtMatKhau.Text.Trim();
-
-            // 1. Kiểm tra rỗng
-            if (string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(pass))
-            {
-                MessageBox.Show("Nhập đầy đủ thông tin!");
-                return;
-            }
-
-            try
-            {
-                // 2. Gọi service (đúng kiểu User)
-                var u = auth.Login(user, pass);
-
-                // 3. Kiểm tra login thất bại
-                if (u == null)
-                {
-                    MessageBox.Show("Sai tài khoản hoặc mật khẩu");
-                    return;
-                }
-
-                // 4. Lấy role
-                string role = u.VaiTro.ToUpper();
-
-                Form f = null;
-
-                // 5. Phân quyền mở form
-                if (role == "ADMIN")
-                {
-                    f = new FormAdmin();
-                }
-                else if (role == "SV")
-                {
-                    f = new FormSinhVien(u.MaSV); // ⚠️ FIX: truyền MaSV
-                }
-                else if (role == "GV")
-                {
-                    f = new FormGiangVien(u.MaGV); // ⚠️ FIX: truyền MaGV
-                }
-                else
-                {
-                    MessageBox.Show("Không xác định vai trò!");
-                    return;
-                }
-
-                // 6. Mở form
-                this.Hide();
-                f.ShowDialog();
-                this.Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi hệ thống: " + ex.Message);
-            }
-        }
-
         private void FormDangNhap_Load(object sender, EventArgs e)
         {
             this.AcceptButton = btnDangNhap;
@@ -93,5 +34,57 @@ namespace QuanLySinhVienCSharp.Forms
         {
 
         }
-    }
+
+        private void btnDangNhap_Click(object sender, EventArgs e)
+        {
+            string user = txtTaiKhoan.Text.Trim();
+            string pass = txtMatKhau.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(pass))
+            {
+                MessageBox.Show("Nhập đầy đủ thông tin!");
+                return;
+            }
+
+            try
+            {
+                // 1. Chỉ cần gọi Login một lần duy nhất
+                var u = auth.Login(user, pass);
+
+                if (u == null)
+                {
+                    MessageBox.Show("Sai tài khoản hoặc mật khẩu hoặc tài khoản bị khóa!");
+                    txtMatKhau.Clear();
+                    txtMatKhau.Focus();
+                    return;
+                }
+
+                // 2. Điều hướng dựa trên u (đã có đủ thông tin VaiTro, MaSV, MaGV)
+                string role = u.VaiTro?.Trim().ToUpper() ?? "";
+                Form f = null;
+
+                if (role == "ADMIN")
+                    f = new FormAdmin();
+                else if (role == "SV")
+                    f = new FormSinhVien(u.MaSV);
+                else if (role == "GV")
+                    f = new FormGiangVien(u.MaGV);
+
+                if (f == null)
+                {
+                    MessageBox.Show("Không xác định được vai trò người dùng!");
+                    return;
+                }
+
+                this.Hide();
+                f.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi hệ thống: " + ex.Message);
+            }
         }
+
+    }
+}

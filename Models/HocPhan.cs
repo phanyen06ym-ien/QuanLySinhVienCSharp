@@ -11,6 +11,8 @@ namespace QuanLySinhVienCSharp.Models
         public string MaHP { get; set; }
         public string TenHP { get; set; }
         public int TinChi { get; set; }
+
         public string MaKhoa { get; set; }
+        public string TenKhoa { get; set; }
     }
 }

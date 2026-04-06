@@ -7,17 +7,26 @@ namespace QuanLySinhVienCSharp.Services
 {
     public class DiemService
     {
-        // ================= LẤY TẤT CẢ =================
-        public DataTable GetAll()
+        // ================= XEM TẤT CẢ / THEO SV =================
+        public DataTable GetBangDiem(string maSV = null)
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                string sql = "SELECT * FROM VIEW_BangDiem_Full";
+                using (SqlCommand cmd = new SqlCommand("spXemBangDiem", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                SqlDataAdapter da = new SqlDataAdapter(sql, conn);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
+                    if (string.IsNullOrEmpty(maSV))
+                        cmd.Parameters.AddWithValue("@MaSV", DBNull.Value);
+                    else
+                        cmd.Parameters.AddWithValue("@MaSV", maSV);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    return dt;
+                }
             }
         }
 
@@ -31,20 +40,21 @@ namespace QuanLySinhVienCSharp.Services
 
                 try
                 {
-                    using (SqlCommand cmd = new SqlCommand("spNhapDiem", conn)) // FIX
+                    using (SqlCommand cmd = new SqlCommand("spNhapDiem", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = maSV;
-                        cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = maHP;
-                        cmd.Parameters.Add("@HocKy", SqlDbType.Int).Value = hocKy;
-                        cmd.Parameters.Add("@NamHoc", SqlDbType.NVarChar).Value = namHoc;
+                        cmd.Parameters.AddWithValue("@MaSV", maSV);
+                        cmd.Parameters.AddWithValue("@MaHP", maHP);
+                        cmd.Parameters.AddWithValue("@HocKy", hocKy);
+                        cmd.Parameters.AddWithValue("@NamHoc", namHoc);
+
                         cmd.Parameters.Add("@DiemCC", SqlDbType.Decimal).Value = diemCC;
                         cmd.Parameters.Add("@DiemBT", SqlDbType.Decimal).Value = diemBT;
                         cmd.Parameters.Add("@DiemGK", SqlDbType.Decimal).Value = diemGK;
                         cmd.Parameters.Add("@DiemCK", SqlDbType.Decimal).Value = diemCK;
 
-                        cmd.ExecuteNonQuery(); // FIX
+                        cmd.ExecuteNonQuery();
                         return true;
                     }
                 }
@@ -65,20 +75,21 @@ namespace QuanLySinhVienCSharp.Services
 
                 try
                 {
-                    using (SqlCommand cmd = new SqlCommand("spSuaDiem", conn)) // FIX
+                    using (SqlCommand cmd = new SqlCommand("spSuaDiem", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = maSV;
-                        cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = maHP;
-                        cmd.Parameters.Add("@HocKy", SqlDbType.Int).Value = hocKy;
-                        cmd.Parameters.Add("@NamHoc", SqlDbType.NVarChar).Value = namHoc;
+                        cmd.Parameters.AddWithValue("@MaSV", maSV);
+                        cmd.Parameters.AddWithValue("@MaHP", maHP);
+                        cmd.Parameters.AddWithValue("@HocKy", hocKy);
+                        cmd.Parameters.AddWithValue("@NamHoc", namHoc);
+
                         cmd.Parameters.Add("@DiemCC", SqlDbType.Decimal).Value = diemCC;
                         cmd.Parameters.Add("@DiemBT", SqlDbType.Decimal).Value = diemBT;
                         cmd.Parameters.Add("@DiemGK", SqlDbType.Decimal).Value = diemGK;
                         cmd.Parameters.Add("@DiemCK", SqlDbType.Decimal).Value = diemCK;
 
-                        cmd.ExecuteNonQuery(); // FIX
+                        cmd.ExecuteNonQuery();
                         return true;
                     }
                 }
@@ -89,8 +100,8 @@ namespace QuanLySinhVienCSharp.Services
             }
         }
 
-        // ================= XÓA =================
-        public bool Delete(string maSV, string maHP)
+        // ================= XÓA ĐIỂM =================
+        public bool XoaDiem(string maSV, string maHP, int hocKy, string namHoc)
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
@@ -98,33 +109,38 @@ namespace QuanLySinhVienCSharp.Services
 
                 try
                 {
-                    string sql = "DELETE FROM DIEM WHERE MaSV=@MaSV AND MaHP=@MaHP";
-
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SqlCommand cmd = new SqlCommand("spHuyDangKy", conn))
                     {
-                        cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = maSV;
-                        cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = maHP;
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                        return cmd.ExecuteNonQuery() > 0;
+                        cmd.Parameters.AddWithValue("@MaSV", maSV);
+                        cmd.Parameters.AddWithValue("@MaHP", maHP);
+                        cmd.Parameters.AddWithValue("@HocKy", hocKy);
+                        cmd.Parameters.AddWithValue("@NamHoc", namHoc);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
                     }
                 }
-                catch (Exception ex)
+                catch (SqlException ex)
                 {
                     throw new Exception("Lỗi xóa điểm: " + ex.Message);
                 }
             }
         }
+
+        // ================= LẤY THEO GIẢNG VIÊN =================
         public DataTable GetByGiangVien(string maGV)
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 string sql = @"
-            SELECT *
-            FROM VIEW_BangDiem_Full
-            WHERE MaGV = @MaGV";
+                    SELECT *
+                    FROM VIEW_BangDiem_Full
+                    WHERE MaGV = @MaGV";
 
                 SqlDataAdapter da = new SqlDataAdapter(sql, conn);
-                da.SelectCommand.Parameters.Add("@MaGV", SqlDbType.VarChar).Value = maGV;
+                da.SelectCommand.Parameters.AddWithValue("@MaGV", maGV);
 
                 DataTable dt = new DataTable();
                 da.Fill(dt);

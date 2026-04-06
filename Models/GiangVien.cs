@@ -15,6 +15,6 @@ namespace QuanLySinhVienCSharp.Models
         public string Email { get; set; }
 
         public string MaKhoa { get; set; }
-        public string TenKhoa { get; set; } // thêm
+        public string TenKhoa { get; set; }
     }
 }

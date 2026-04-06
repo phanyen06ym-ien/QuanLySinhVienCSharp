@@ -13,12 +13,16 @@ namespace QuanLySinhVienCSharp.Services
         {
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
-                string sql = "SELECT * FROM HOCPHAN"; // OK
+                using (SqlCommand cmd = new SqlCommand("spXemHocPhan", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                SqlDataAdapter da = new SqlDataAdapter(sql, conn);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    return dt;
+                }
             }
         }
 
@@ -29,16 +33,24 @@ namespace QuanLySinhVienCSharp.Services
             {
                 conn.Open();
 
-                using (SqlCommand cmd = new SqlCommand(@"
-                    INSERT INTO HOCPHAN (MaHP, TenHP, TinChi, MaKhoa)
-                    VALUES (@MaHP, @TenHP, @TinChi, @MaKhoa)", conn))
+                try
                 {
-                    cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = hp.MaHP;
-                    cmd.Parameters.Add("@TenHP", SqlDbType.NVarChar).Value = hp.TenHP;
-                    cmd.Parameters.Add("@TinChi", SqlDbType.Int).Value = hp.TinChi;
-                    cmd.Parameters.Add("@MaKhoa", SqlDbType.VarChar).Value = hp.MaKhoa;
+                    using (SqlCommand cmd = new SqlCommand("spThemHocPhan", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    return cmd.ExecuteNonQuery() > 0;
+                        cmd.Parameters.AddWithValue("@MaHP", hp.MaHP);
+                        cmd.Parameters.AddWithValue("@TenHP", hp.TenHP);
+                        cmd.Parameters.AddWithValue("@TinChi", hp.TinChi);
+                        cmd.Parameters.AddWithValue("@MaKhoa", hp.MaKhoa);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Lỗi thêm học phần: " + ex.Message);
                 }
             }
         }
@@ -50,19 +62,24 @@ namespace QuanLySinhVienCSharp.Services
             {
                 conn.Open();
 
-                using (SqlCommand cmd = new SqlCommand(@"
-                    UPDATE HOCPHAN
-                    SET TenHP = @TenHP,
-                        TinChi = @TinChi,
-                        MaKhoa = @MaKhoa
-                    WHERE MaHP = @MaHP", conn))
+                try
                 {
-                    cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = hp.MaHP;
-                    cmd.Parameters.Add("@TenHP", SqlDbType.NVarChar).Value = hp.TenHP;
-                    cmd.Parameters.Add("@TinChi", SqlDbType.Int).Value = hp.TinChi;
-                    cmd.Parameters.Add("@MaKhoa", SqlDbType.VarChar).Value = hp.MaKhoa;
+                    using (SqlCommand cmd = new SqlCommand("spSuaHocPhan", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    return cmd.ExecuteNonQuery() > 0;
+                        cmd.Parameters.AddWithValue("@MaHP", hp.MaHP);
+                        cmd.Parameters.AddWithValue("@TenHP", hp.TenHP);
+                        cmd.Parameters.AddWithValue("@TinChi", hp.TinChi);
+                        cmd.Parameters.AddWithValue("@MaKhoa", hp.MaKhoa);
+
+                        cmd.ExecuteNonQuery();
+                        return true;
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Lỗi cập nhật học phần: " + ex.Message);
                 }
             }
         }
@@ -73,39 +90,21 @@ namespace QuanLySinhVienCSharp.Services
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 conn.Open();
-                SqlTransaction trans = conn.BeginTransaction();
 
                 try
                 {
-                    // ❗ nếu DB đã có CASCADE thì KHÔNG cần 2 dòng dưới
-                    using (SqlCommand cmdDiem = new SqlCommand(
-                        "DELETE FROM DIEM WHERE MaHP = @MaHP", conn, trans))
+                    using (SqlCommand cmd = new SqlCommand("spXoaHocPhan", conn))
                     {
-                        cmdDiem.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = maHP;
-                        cmdDiem.ExecuteNonQuery();
-                    }
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    using (SqlCommand cmdDangKy = new SqlCommand(
-                        "DELETE FROM DANGKY WHERE MaHP = @MaHP", conn, trans))
-                    {
-                        cmdDangKy.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = maHP;
-                        cmdDangKy.ExecuteNonQuery();
-                    }
+                        cmd.Parameters.AddWithValue("@MaHP", maHP);
 
-                    using (SqlCommand cmdHP = new SqlCommand(
-                        "DELETE FROM HOCPHAN WHERE MaHP = @MaHP", conn, trans))
-                    {
-                        cmdHP.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = maHP;
-
-                        int result = cmdHP.ExecuteNonQuery();
-                        trans.Commit();
-
-                        return result > 0;
+                        cmd.ExecuteNonQuery();
+                        return true;
                     }
                 }
-                catch (Exception ex)
+                catch (SqlException ex)
                 {
-                    trans.Rollback();
                     throw new Exception("Lỗi xóa học phần: " + ex.Message);
                 }
             }

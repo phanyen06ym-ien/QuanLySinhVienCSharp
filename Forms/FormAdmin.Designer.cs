@@ -32,6 +32,8 @@ namespace QuanLySinhVien
         {
             this.tabDangXuat = new System.Windows.Forms.TabControl();
             this.tabQLTK = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtMatKhau = new System.Windows.Forms.TextBox();
             this.btnTaiLaiTK = new System.Windows.Forms.Button();
             this.btnThemTK = new System.Windows.Forms.Button();
             this.btnXoaTK = new System.Windows.Forms.Button();
@@ -42,6 +44,8 @@ namespace QuanLySinhVien
             this.panel1 = new System.Windows.Forms.Panel();
             this.dgvTaiKhoan = new System.Windows.Forms.DataGridView();
             this.tabQLSV = new System.Windows.Forms.TabPage();
+            this.btnSearchSV = new System.Windows.Forms.Button();
+            this.txtSearchSV = new System.Windows.Forms.TextBox();
             this.txtMaLop = new System.Windows.Forms.TextBox();
             this.cboGioiTinhSV = new System.Windows.Forms.ComboBox();
             this.btnTaiLaiSV = new System.Windows.Forms.Button();
@@ -67,6 +71,8 @@ namespace QuanLySinhVien
             this.panel2 = new System.Windows.Forms.Panel();
             this.dgvSinhVien = new System.Windows.Forms.DataGridView();
             this.tabQLGV = new System.Windows.Forms.TabPage();
+            this.btnSearchGV = new System.Windows.Forms.Button();
+            this.txtSearchGV = new System.Windows.Forms.TextBox();
             this.btnTaiLaiGV = new System.Windows.Forms.Button();
             this.btnXoaGV = new System.Windows.Forms.Button();
             this.btnSuaGV = new System.Windows.Forms.Button();
@@ -86,6 +92,7 @@ namespace QuanLySinhVien
             this.panel3 = new System.Windows.Forms.Panel();
             this.dgvGiangVien = new System.Windows.Forms.DataGridView();
             this.tabHocPhan = new System.Windows.Forms.TabPage();
+            this.btnSuaHP = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtMaKhoa = new System.Windows.Forms.TextBox();
             this.btnTaiLaiHP = new System.Windows.Forms.Button();
@@ -100,6 +107,15 @@ namespace QuanLySinhVien
             this.panel4 = new System.Windows.Forms.Panel();
             this.dgvHocPhan = new System.Windows.Forms.DataGridView();
             this.tabBaoCao = new System.Windows.Forms.TabPage();
+            this.btnSVTheoKhoa = new System.Windows.Forms.Button();
+            this.txtSVTheoKhoa = new System.Windows.Forms.TextBox();
+            this.txtSVTheoHP = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtSVTheoLop = new System.Windows.Forms.TextBox();
+            this.btnSVTheoHP = new System.Windows.Forms.Button();
+            this.btnSVTheoLop = new System.Windows.Forms.Button();
             this.btnTaiDuLieu = new System.Windows.Forms.Button();
             this.dgvBaoCao = new System.Windows.Forms.DataGridView();
             this.btnXuatExcel = new System.Windows.Forms.Button();
@@ -139,6 +155,8 @@ namespace QuanLySinhVien
             // 
             // tabQLTK
             // 
+            this.tabQLTK.Controls.Add(this.label2);
+            this.tabQLTK.Controls.Add(this.txtMatKhau);
             this.tabQLTK.Controls.Add(this.btnTaiLaiTK);
             this.tabQLTK.Controls.Add(this.btnThemTK);
             this.tabQLTK.Controls.Add(this.btnXoaTK);
@@ -155,6 +173,23 @@ namespace QuanLySinhVien
             this.tabQLTK.TabIndex = 0;
             this.tabQLTK.Text = "Quản Lý Tài Khoản";
             this.tabQLTK.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(506, 118);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 20);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Mật Khẩu ";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // txtMatKhau
+            // 
+            this.txtMatKhau.Location = new System.Drawing.Point(640, 112);
+            this.txtMatKhau.Name = "txtMatKhau";
+            this.txtMatKhau.Size = new System.Drawing.Size(148, 26);
+            this.txtMatKhau.TabIndex = 8;
             // 
             // btnTaiLaiTK
             // 
@@ -209,6 +244,7 @@ namespace QuanLySinhVien
             this.txtTaiKhoan.Name = "txtTaiKhoan";
             this.txtTaiKhoan.Size = new System.Drawing.Size(148, 26);
             this.txtTaiKhoan.TabIndex = 3;
+            this.txtTaiKhoan.TextChanged += new System.EventHandler(this.txtTaiKhoan_TextChanged);
             // 
             // lblVaiTro
             // 
@@ -229,15 +265,16 @@ namespace QuanLySinhVien
             this.lblTaiKhoan.Size = new System.Drawing.Size(80, 20);
             this.lblTaiKhoan.TabIndex = 1;
             this.lblTaiKhoan.Text = "Tài Khoản";
+            this.lblTaiKhoan.Click += new System.EventHandler(this.lblTaiKhoan_Click);
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.dgvTaiKhoan);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(4, 253);
+            this.panel1.Location = new System.Drawing.Point(4, 380);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1746, 698);
+            this.panel1.Size = new System.Drawing.Size(1746, 571);
             this.panel1.TabIndex = 0;
             // 
             // dgvTaiKhoan
@@ -248,11 +285,14 @@ namespace QuanLySinhVien
             this.dgvTaiKhoan.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dgvTaiKhoan.Name = "dgvTaiKhoan";
             this.dgvTaiKhoan.RowHeadersWidth = 62;
-            this.dgvTaiKhoan.Size = new System.Drawing.Size(1746, 698);
+            this.dgvTaiKhoan.Size = new System.Drawing.Size(1746, 571);
             this.dgvTaiKhoan.TabIndex = 0;
+            this.dgvTaiKhoan.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvTaiKhoan_CellContentClick);
             // 
             // tabQLSV
             // 
+            this.tabQLSV.Controls.Add(this.btnSearchSV);
+            this.tabQLSV.Controls.Add(this.txtSearchSV);
             this.tabQLSV.Controls.Add(this.txtMaLop);
             this.tabQLSV.Controls.Add(this.cboGioiTinhSV);
             this.tabQLSV.Controls.Add(this.btnTaiLaiSV);
@@ -285,6 +325,23 @@ namespace QuanLySinhVien
             this.tabQLSV.Text = "Quản Lý Sinh Viên";
             this.tabQLSV.UseVisualStyleBackColor = true;
             // 
+            // btnSearchSV
+            // 
+            this.btnSearchSV.Location = new System.Drawing.Point(271, 273);
+            this.btnSearchSV.Name = "btnSearchSV";
+            this.btnSearchSV.Size = new System.Drawing.Size(111, 34);
+            this.btnSearchSV.TabIndex = 32;
+            this.btnSearchSV.Text = "Tìm Kiếm ";
+            this.btnSearchSV.UseVisualStyleBackColor = true;
+            this.btnSearchSV.Click += new System.EventHandler(this.btnSearchSV_Click);
+            // 
+            // txtSearchSV
+            // 
+            this.txtSearchSV.Location = new System.Drawing.Point(37, 277);
+            this.txtSearchSV.Name = "txtSearchSV";
+            this.txtSearchSV.Size = new System.Drawing.Size(194, 26);
+            this.txtSearchSV.TabIndex = 31;
+            // 
             // txtMaLop
             // 
             this.txtMaLop.Location = new System.Drawing.Point(1256, 32);
@@ -306,17 +363,18 @@ namespace QuanLySinhVien
             // 
             // btnTaiLaiSV
             // 
-            this.btnTaiLaiSV.Location = new System.Drawing.Point(1062, 272);
+            this.btnTaiLaiSV.Location = new System.Drawing.Point(1131, 230);
             this.btnTaiLaiSV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnTaiLaiSV.Name = "btnTaiLaiSV";
             this.btnTaiLaiSV.Size = new System.Drawing.Size(112, 35);
             this.btnTaiLaiSV.TabIndex = 28;
             this.btnTaiLaiSV.Text = "Tải Lại";
             this.btnTaiLaiSV.UseVisualStyleBackColor = true;
+            this.btnTaiLaiSV.Click += new System.EventHandler(this.btnTaiLaiSV_Click);
             // 
             // btnXoaSV
             // 
-            this.btnXoaSV.Location = new System.Drawing.Point(882, 272);
+            this.btnXoaSV.Location = new System.Drawing.Point(954, 230);
             this.btnXoaSV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnXoaSV.Name = "btnXoaSV";
             this.btnXoaSV.Size = new System.Drawing.Size(112, 35);
@@ -327,7 +385,7 @@ namespace QuanLySinhVien
             // 
             // btnSuaSV
             // 
-            this.btnSuaSV.Location = new System.Drawing.Point(684, 272);
+            this.btnSuaSV.Location = new System.Drawing.Point(748, 230);
             this.btnSuaSV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSuaSV.Name = "btnSuaSV";
             this.btnSuaSV.Size = new System.Drawing.Size(112, 35);
@@ -338,7 +396,7 @@ namespace QuanLySinhVien
             // 
             // btnThemSV
             // 
-            this.btnThemSV.Location = new System.Drawing.Point(501, 272);
+            this.btnThemSV.Location = new System.Drawing.Point(543, 230);
             this.btnThemSV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnThemSV.Name = "btnThemSV";
             this.btnThemSV.Size = new System.Drawing.Size(112, 35);
@@ -522,9 +580,12 @@ namespace QuanLySinhVien
             this.dgvSinhVien.RowHeadersWidth = 62;
             this.dgvSinhVien.Size = new System.Drawing.Size(1746, 628);
             this.dgvSinhVien.TabIndex = 0;
+            this.dgvSinhVien.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSinhVien_CellContentClick);
             // 
             // tabQLGV
             // 
+            this.tabQLGV.Controls.Add(this.btnSearchGV);
+            this.tabQLGV.Controls.Add(this.txtSearchGV);
             this.tabQLGV.Controls.Add(this.btnTaiLaiGV);
             this.tabQLGV.Controls.Add(this.btnXoaGV);
             this.tabQLGV.Controls.Add(this.btnSuaGV);
@@ -550,10 +611,28 @@ namespace QuanLySinhVien
             this.tabQLGV.TabIndex = 2;
             this.tabQLGV.Text = "Quản Lý Giảng Viên";
             this.tabQLGV.UseVisualStyleBackColor = true;
+            this.tabQLGV.Click += new System.EventHandler(this.tabQLGV_Click);
+            // 
+            // btnSearchGV
+            // 
+            this.btnSearchGV.Location = new System.Drawing.Point(291, 366);
+            this.btnSearchGV.Name = "btnSearchGV";
+            this.btnSearchGV.Size = new System.Drawing.Size(94, 30);
+            this.btnSearchGV.TabIndex = 23;
+            this.btnSearchGV.Text = "Tìm Kiếm ";
+            this.btnSearchGV.UseVisualStyleBackColor = true;
+            this.btnSearchGV.Click += new System.EventHandler(this.btnSearchGV_Click);
+            // 
+            // txtSearchGV
+            // 
+            this.txtSearchGV.Location = new System.Drawing.Point(49, 366);
+            this.txtSearchGV.Name = "txtSearchGV";
+            this.txtSearchGV.Size = new System.Drawing.Size(190, 26);
+            this.txtSearchGV.TabIndex = 22;
             // 
             // btnTaiLaiGV
             // 
-            this.btnTaiLaiGV.Location = new System.Drawing.Point(1041, 360);
+            this.btnTaiLaiGV.Location = new System.Drawing.Point(1095, 300);
             this.btnTaiLaiGV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnTaiLaiGV.Name = "btnTaiLaiGV";
             this.btnTaiLaiGV.Size = new System.Drawing.Size(112, 35);
@@ -564,7 +643,7 @@ namespace QuanLySinhVien
             // 
             // btnXoaGV
             // 
-            this.btnXoaGV.Location = new System.Drawing.Point(892, 360);
+            this.btnXoaGV.Location = new System.Drawing.Point(937, 300);
             this.btnXoaGV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnXoaGV.Name = "btnXoaGV";
             this.btnXoaGV.Size = new System.Drawing.Size(112, 35);
@@ -575,7 +654,7 @@ namespace QuanLySinhVien
             // 
             // btnSuaGV
             // 
-            this.btnSuaGV.Location = new System.Drawing.Point(748, 360);
+            this.btnSuaGV.Location = new System.Drawing.Point(771, 300);
             this.btnSuaGV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSuaGV.Name = "btnSuaGV";
             this.btnSuaGV.Size = new System.Drawing.Size(112, 35);
@@ -586,7 +665,7 @@ namespace QuanLySinhVien
             // 
             // btnThemGV
             // 
-            this.btnThemGV.Location = new System.Drawing.Point(602, 360);
+            this.btnThemGV.Location = new System.Drawing.Point(601, 300);
             this.btnThemGV.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnThemGV.Name = "btnThemGV";
             this.btnThemGV.Size = new System.Drawing.Size(112, 35);
@@ -733,9 +812,11 @@ namespace QuanLySinhVien
             this.dgvGiangVien.RowHeadersWidth = 62;
             this.dgvGiangVien.Size = new System.Drawing.Size(1746, 540);
             this.dgvGiangVien.TabIndex = 0;
+            this.dgvGiangVien.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvGiangVien_CellContentClick);
             // 
             // tabHocPhan
             // 
+            this.tabHocPhan.Controls.Add(this.btnSuaHP);
             this.tabHocPhan.Controls.Add(this.label1);
             this.tabHocPhan.Controls.Add(this.txtMaKhoa);
             this.tabHocPhan.Controls.Add(this.btnTaiLaiHP);
@@ -757,6 +838,16 @@ namespace QuanLySinhVien
             this.tabHocPhan.Text = "Học Phần";
             this.tabHocPhan.UseVisualStyleBackColor = true;
             this.tabHocPhan.Click += new System.EventHandler(this.tabHocPhan_Click);
+            // 
+            // btnSuaHP
+            // 
+            this.btnSuaHP.Location = new System.Drawing.Point(719, 223);
+            this.btnSuaHP.Name = "btnSuaHP";
+            this.btnSuaHP.Size = new System.Drawing.Size(103, 35);
+            this.btnSuaHP.TabIndex = 12;
+            this.btnSuaHP.Text = "Sửa";
+            this.btnSuaHP.UseVisualStyleBackColor = true;
+            this.btnSuaHP.Click += new System.EventHandler(this.btnSuaHP_Click);
             // 
             // label1
             // 
@@ -788,7 +879,7 @@ namespace QuanLySinhVien
             // 
             // btnXoaHP
             // 
-            this.btnXoaHP.Location = new System.Drawing.Point(819, 223);
+            this.btnXoaHP.Location = new System.Drawing.Point(878, 223);
             this.btnXoaHP.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnXoaHP.Name = "btnXoaHP";
             this.btnXoaHP.Size = new System.Drawing.Size(112, 35);
@@ -799,7 +890,7 @@ namespace QuanLySinhVien
             // 
             // btnThemHP
             // 
-            this.btnThemHP.Location = new System.Drawing.Point(615, 223);
+            this.btnThemHP.Location = new System.Drawing.Point(549, 223);
             this.btnThemHP.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnThemHP.Name = "btnThemHP";
             this.btnThemHP.Size = new System.Drawing.Size(112, 35);
@@ -883,9 +974,19 @@ namespace QuanLySinhVien
             this.dgvHocPhan.RowHeadersWidth = 62;
             this.dgvHocPhan.Size = new System.Drawing.Size(1746, 677);
             this.dgvHocPhan.TabIndex = 0;
+            this.dgvHocPhan.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvHocPhan_CellContentClick);
             // 
             // tabBaoCao
             // 
+            this.tabBaoCao.Controls.Add(this.btnSVTheoKhoa);
+            this.tabBaoCao.Controls.Add(this.txtSVTheoKhoa);
+            this.tabBaoCao.Controls.Add(this.txtSVTheoHP);
+            this.tabBaoCao.Controls.Add(this.label5);
+            this.tabBaoCao.Controls.Add(this.label4);
+            this.tabBaoCao.Controls.Add(this.label3);
+            this.tabBaoCao.Controls.Add(this.txtSVTheoLop);
+            this.tabBaoCao.Controls.Add(this.btnSVTheoHP);
+            this.tabBaoCao.Controls.Add(this.btnSVTheoLop);
             this.tabBaoCao.Controls.Add(this.btnTaiDuLieu);
             this.tabBaoCao.Controls.Add(this.dgvBaoCao);
             this.tabBaoCao.Controls.Add(this.btnXuatExcel);
@@ -897,34 +998,113 @@ namespace QuanLySinhVien
             this.tabBaoCao.TabIndex = 4;
             this.tabBaoCao.Text = "Báo Cáo";
             this.tabBaoCao.UseVisualStyleBackColor = true;
+            this.tabBaoCao.Click += new System.EventHandler(this.tabBaoCao_Click);
+            // 
+            // btnSVTheoKhoa
+            // 
+            this.btnSVTheoKhoa.Location = new System.Drawing.Point(517, 150);
+            this.btnSVTheoKhoa.Name = "btnSVTheoKhoa";
+            this.btnSVTheoKhoa.Size = new System.Drawing.Size(141, 40);
+            this.btnSVTheoKhoa.TabIndex = 14;
+            this.btnSVTheoKhoa.Text = "Tải Lên";
+            this.btnSVTheoKhoa.UseVisualStyleBackColor = true;
+            this.btnSVTheoKhoa.Click += new System.EventHandler(this.btnSVTheoKhoa_Click);
+            // 
+            // txtSVTheoKhoa
+            // 
+            this.txtSVTheoKhoa.Location = new System.Drawing.Point(296, 150);
+            this.txtSVTheoKhoa.Name = "txtSVTheoKhoa";
+            this.txtSVTheoKhoa.Size = new System.Drawing.Size(129, 26);
+            this.txtSVTheoKhoa.TabIndex = 13;
+            // 
+            // txtSVTheoHP
+            // 
+            this.txtSVTheoHP.Location = new System.Drawing.Point(293, 82);
+            this.txtSVTheoHP.Name = "txtSVTheoHP";
+            this.txtSVTheoHP.Size = new System.Drawing.Size(133, 26);
+            this.txtSVTheoHP.TabIndex = 12;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(28, 88);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(241, 20);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "báo cáo sinh viên theo học phần ";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(28, 161);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(206, 20);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "báo cáo sinh viên theo khoa";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(28, 19);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(192, 20);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "báo cáo sinh viên theo lớp";
+            // 
+            // txtSVTheoLop
+            // 
+            this.txtSVTheoLop.Location = new System.Drawing.Point(296, 13);
+            this.txtSVTheoLop.Name = "txtSVTheoLop";
+            this.txtSVTheoLop.Size = new System.Drawing.Size(131, 26);
+            this.txtSVTheoLop.TabIndex = 8;
+            // 
+            // btnSVTheoHP
+            // 
+            this.btnSVTheoHP.Location = new System.Drawing.Point(516, 79);
+            this.btnSVTheoHP.Name = "btnSVTheoHP";
+            this.btnSVTheoHP.Size = new System.Drawing.Size(143, 39);
+            this.btnSVTheoHP.TabIndex = 7;
+            this.btnSVTheoHP.Text = "Tải Lên";
+            this.btnSVTheoHP.UseVisualStyleBackColor = true;
+            this.btnSVTheoHP.Click += new System.EventHandler(this.btnSVTheoHP_Click);
+            // 
+            // btnSVTheoLop
+            // 
+            this.btnSVTheoLop.Location = new System.Drawing.Point(516, 6);
+            this.btnSVTheoLop.Name = "btnSVTheoLop";
+            this.btnSVTheoLop.Size = new System.Drawing.Size(143, 47);
+            this.btnSVTheoLop.TabIndex = 6;
+            this.btnSVTheoLop.Text = "Tải Lên ";
+            this.btnSVTheoLop.UseVisualStyleBackColor = true;
+            this.btnSVTheoLop.Click += new System.EventHandler(this.btnSVTheoLop_Click);
             // 
             // btnTaiDuLieu
             // 
-            this.btnTaiDuLieu.Location = new System.Drawing.Point(742, 68);
+            this.btnTaiDuLieu.Location = new System.Drawing.Point(1423, 187);
             this.btnTaiDuLieu.Name = "btnTaiDuLieu";
-            this.btnTaiDuLieu.Size = new System.Drawing.Size(159, 49);
+            this.btnTaiDuLieu.Size = new System.Drawing.Size(149, 41);
             this.btnTaiDuLieu.TabIndex = 5;
-            this.btnTaiDuLieu.Text = "Tải Lên";
+            this.btnTaiDuLieu.Text = "Load";
             this.btnTaiDuLieu.UseVisualStyleBackColor = true;
-            this.btnTaiDuLieu.Click += new System.EventHandler(this.button1_Click);
+            this.btnTaiDuLieu.Click += new System.EventHandler(this.btnLoadSV_Click);
             // 
             // dgvBaoCao
             // 
             this.dgvBaoCao.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvBaoCao.Location = new System.Drawing.Point(3, 143);
+            this.dgvBaoCao.Location = new System.Drawing.Point(0, 234);
             this.dgvBaoCao.Name = "dgvBaoCao";
             this.dgvBaoCao.RowHeadersWidth = 62;
             this.dgvBaoCao.RowTemplate.Height = 28;
             this.dgvBaoCao.Size = new System.Drawing.Size(1751, 805);
             this.dgvBaoCao.TabIndex = 4;
-            this.dgvBaoCao.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            this.dgvBaoCao.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvBaoCao_CellContentClick);
             // 
             // btnXuatExcel
             // 
-            this.btnXuatExcel.Location = new System.Drawing.Point(986, 68);
+            this.btnXuatExcel.Location = new System.Drawing.Point(1586, 189);
             this.btnXuatExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnXuatExcel.Name = "btnXuatExcel";
-            this.btnXuatExcel.Size = new System.Drawing.Size(159, 49);
+            this.btnXuatExcel.Size = new System.Drawing.Size(159, 37);
             this.btnXuatExcel.TabIndex = 3;
             this.btnXuatExcel.Text = "Xuất Excel";
             this.btnXuatExcel.UseVisualStyleBackColor = true;
@@ -968,13 +1148,9 @@ namespace QuanLySinhVien
             this.panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvHocPhan)).EndInit();
             this.tabBaoCao.ResumeLayout(false);
+            this.tabBaoCao.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvBaoCao)).EndInit();
             this.ResumeLayout(false);
-
-        }
-
-        private void btnTaiLaiSV1_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -1054,5 +1230,21 @@ namespace QuanLySinhVien
         private System.Windows.Forms.DataGridView dgvBaoCao;
         private System.Windows.Forms.Button btnTaiDuLieu;
         private System.Windows.Forms.TabPage tabDangXuatAD;
+        private System.Windows.Forms.TextBox txtMatKhau;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnSearchSV;
+        private System.Windows.Forms.TextBox txtSearchSV;
+        private System.Windows.Forms.Button btnSearchGV;
+        private System.Windows.Forms.TextBox txtSearchGV;
+        private System.Windows.Forms.Button btnSuaHP;
+        private System.Windows.Forms.TextBox txtSVTheoLop;
+        private System.Windows.Forms.Button btnSVTheoHP;
+        private System.Windows.Forms.Button btnSVTheoLop;
+        private System.Windows.Forms.Button btnSVTheoKhoa;
+        private System.Windows.Forms.TextBox txtSVTheoKhoa;
+        private System.Windows.Forms.TextBox txtSVTheoHP;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
     }
 }

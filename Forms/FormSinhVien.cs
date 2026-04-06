@@ -28,6 +28,7 @@ namespace QuanLySinhVien
             LoadThongTin();
             LoadComboHP();
             LoadDangKy();
+            LoadBangDiem();
 
             dgvKetQua.DataSource = svService.GetBangDiemTheoSV(this.maSV.Trim());
         }
@@ -78,6 +79,10 @@ namespace QuanLySinhVien
                 dgvDangKy.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
         }
+        private void LoadBangDiem()
+        {
+            dgvKetQua.DataSource = svService.GetBangDiemTheoSV(this.maSV.Trim());
+        }
 
         private void btnDangKy_Click(object sender, EventArgs e)
         {
@@ -87,20 +92,43 @@ namespace QuanLySinhVien
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(txtNamHoc.Text))
+            {
+                MessageBox.Show("Vui lòng nhập năm học!");
+                return;
+            }
+
             try
             {
                 var dk = new DangKy
                 {
                     MaSV = maSV,
                     MaHP = cboMaHP.SelectedValue.ToString(),
-                    HocKy = int.TryParse(cboHocKy.Text, out int hk) ? hk : 1,
-                    NamHoc = txtNamHoc.Text
+                    HocKy = int.Parse(cboHocKy.Text),
+                    NamHoc = txtNamHoc.Text.Trim()
                 };
+
+                // 👉 CHECK TRÙNG
+                DataTable dt = svService.GetHocPhanDaDangKy(maSV);
+                bool daTonTai = dt.Select(
+                    $"MaHP = '{dk.MaHP}' AND HocKy = {dk.HocKy} AND NamHoc = '{dk.NamHoc}'"
+                ).Length > 0;
+
+                if (daTonTai)
+                {
+                    MessageBox.Show("Bạn đã đăng ký học phần này rồi!");
+                    return;
+                }
 
                 if (dkService.DangKy(dk))
                 {
                     MessageBox.Show("Đăng ký thành công!");
-                    LoadDangKy(); 
+
+                    LoadDangKy();
+                    LoadBangDiem(); // 👉 cập nhật luôn
+
+                    // 👉 reset form
+                    cboMaHP.SelectedIndex = -1;
                 }
             }
             catch (Exception ex)
@@ -113,12 +141,12 @@ namespace QuanLySinhVien
         {
             LoadThongTin();
             LoadDangKy();
-            dgvKetQua.DataSource = svService.GetBangDiemTheoSV(this.maSV.Trim());
+            LoadBangDiem();
         }
 
         private void LoadComboHP()
         {
-            DataTable dt = svService.GetHocPhanDeDangKy();
+            DataTable dt = svService.GetHocPhanDeDangKy(this.maSV);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -126,6 +154,8 @@ namespace QuanLySinhVien
                 cboMaHP.DisplayMember = "TenHP";
                 cboMaHP.ValueMember = "MaHP";
             }
+
+            cboMaHP.SelectedIndex = -1;
 
             if (cboHocKy.Items.Count == 0)
             {

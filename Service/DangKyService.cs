@@ -1,7 +1,6 @@
 ﻿using QuanLySinhVienCSharp.Models;
 using QuanLySinhVienCSharp.Service;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -9,8 +8,14 @@ namespace QuanLySinhVienCSharp.Services
 {
     public class DangKyService
     {
+        // ================= ĐĂNG KÝ =================
         public bool DangKy(DangKy dk)
         {
+            if (dk == null ||
+                string.IsNullOrWhiteSpace(dk.MaSV) ||
+                string.IsNullOrWhiteSpace(dk.MaHP))
+                throw new Exception("Dữ liệu không hợp lệ");
+
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 conn.Open();
@@ -21,59 +26,77 @@ namespace QuanLySinhVienCSharp.Services
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = dk.MaSV;
-                        cmd.Parameters.Add("@MaHP", SqlDbType.VarChar).Value = dk.MaHP;
-                        cmd.Parameters.Add("@HocKy", SqlDbType.Int).Value = dk.HocKy;
-                        cmd.Parameters.Add("@NamHoc", SqlDbType.NVarChar).Value = dk.NamHoc;
+                        cmd.Parameters.AddWithValue("@MaSV", dk.MaSV.Trim());
+                        cmd.Parameters.AddWithValue("@MaHP", dk.MaHP.Trim());
+                        cmd.Parameters.AddWithValue("@HocKy", dk.HocKy);
+                        cmd.Parameters.AddWithValue("@NamHoc", dk.NamHoc?.Trim());
 
-                        cmd.ExecuteNonQuery(); // chỉ cần chạy OK là true
+                        cmd.ExecuteNonQuery();
                         return true;
                     }
                 }
                 catch (SqlException ex)
                 {
-                    throw new Exception("Lỗi đăng ký: " + ex.Message);
+                    // lấy lỗi từ SQL (RAISERROR)
+                    throw new Exception("Đăng ký thất bại: " + ex.Message);
                 }
             }
         }
 
-        public List<DangKy> GetByMaSV(string maSV)
+        // ================= HỦY ĐĂNG KÝ =================
+        public bool HuyDangKy(DangKy dk)
         {
-            List<DangKy> list = new List<DangKy>();
+            if (dk == null ||
+                string.IsNullOrWhiteSpace(dk.MaSV) ||
+                string.IsNullOrWhiteSpace(dk.MaHP))
+                throw new Exception("Dữ liệu không hợp lệ");
 
             using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
             {
                 conn.Open();
 
-                string sql = @"
-            SELECT dk.MaSV, hp.TenHP, dk.MaHP, dk.HocKy, dk.NamHoc, hp.TinChi
-            FROM DANGKY dk
-            JOIN HOCPHAN hp ON dk.MaHP = hp.MaHP
-            WHERE dk.MaSV = @MaSV";
-
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                try
                 {
-                    cmd.Parameters.Add("@MaSV", SqlDbType.VarChar).Value = maSV;
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("spHuyDangKy", conn))
                     {
-                        while (reader.Read())
-                        {
-                            list.Add(new DangKy
-                            {
-                                MaSV = reader["MaSV"].ToString(),
-                                MaHP = reader["MaHP"].ToString(),
-                                TenHP = reader["TenHP"].ToString(),
-                                HocKy = (int)reader["HocKy"],
-                                NamHoc = reader["NamHoc"].ToString(),
-                                TinChi = (int)reader["TinChi"]
-                            });
-                        }
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@MaSV", dk.MaSV.Trim());
+                        cmd.Parameters.AddWithValue("@MaHP", dk.MaHP.Trim());
+                        cmd.Parameters.AddWithValue("@HocKy", dk.HocKy);
+                        cmd.Parameters.AddWithValue("@NamHoc", dk.NamHoc?.Trim());
+
+                        cmd.ExecuteNonQuery();
+                        return true;
                     }
                 }
+                catch (SqlException ex)
+                {
+                    throw new Exception("Hủy đăng ký thất bại: " + ex.Message);
+                }
             }
+        }
 
-            return list;
+        // ================= LẤY DANH SÁCH =================
+        public DataTable GetByMaSV(string maSV)
+        {
+            if (string.IsNullOrWhiteSpace(maSV))
+                throw new Exception("Mã sinh viên không hợp lệ");
+
+            using (SqlConnection conn = new SqlConnection(DbHelper.connStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("spXemDangKyTheoSV", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@MaSV", maSV.Trim());
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    return dt;
+                }
+            }
         }
     }
 }

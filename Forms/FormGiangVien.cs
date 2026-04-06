@@ -23,46 +23,65 @@ namespace QuanLySinhVienCSharp.Forms
         {
             LoadThongTin();
             LoadDiem();
+            LoadPhanCong();
         }
 
         private void LoadThongTin()
         {
             DataTable dt = gvService.GetById(maGV);
 
-            if (dt.Rows.Count > 0)
+            if (dt.Rows.Count == 0)
             {
-                var r = dt.Rows[0];
-                lblMGV.Text = r["MaGV"].ToString();
-                lblNameGV.Text = r["HoTen"].ToString();
-                lblGioiTinh.Text = r["GioiTinh"].ToString();
-                lblEmail.Text = r["Email"].ToString();
-                lblDiaChi.Text = r["DiaChi"].ToString();
-                lblMaKhoa.Text = r["MaKhoa"].ToString();
+                MessageBox.Show("Không tìm thấy giảng viên!");
+                return;
             }
+
+            var r = dt.Rows[0];
+
+            lblMGV.Text = r["MaGV"]?.ToString() ?? "";
+            lblNameGV.Text = r["HoTen"]?.ToString() ?? "";
+            lblGioiTinh.Text = r["GioiTinh"]?.ToString() ?? "";
+            lblEmail.Text = r["Email"]?.ToString() ?? "";
+            lblDiaChi.Text = r["DiaChi"]?.ToString() ?? "";
+            lblMaKhoa.Text = r["MaKhoa"]?.ToString() ?? "";
+        }
+        private void LoadPhanCong()
+        {
+            dgvLop.DataSource = gvService.GetPhanCong(maGV);
         }
         private void LoadDiem()
         {
             string hocKy = cboHocKy.Text;
             string namHoc = txtNamHoc.Text.Trim();
+            string maHP = txtMaHP.Text;
 
             DataTable dt = diemService.GetByGiangVien(maGV);
 
-            // lọc thêm trên C#
+            string filter = "";
+
             if (!string.IsNullOrEmpty(hocKy))
-            {
-                dt.DefaultView.RowFilter = $"HocKy = {hocKy}";
-            }
+                filter += $"HocKy = {hocKy}";
 
             if (!string.IsNullOrEmpty(namHoc))
             {
-                dt.DefaultView.RowFilter += $" AND NamHoc = '{namHoc}'";
+                if (filter != "") filter += " AND ";
+                filter += $"NamHoc = '{namHoc}'";
             }
 
-            dgvDiem.DataSource = dt;
+            if (!string.IsNullOrEmpty(maHP))
+            {
+                if (filter != "") filter += " AND ";
+                filter += $"MaHP = '{maHP}'";
+            }
+
+            if (!string.IsNullOrEmpty(filter))
+                dt.DefaultView.RowFilter = filter;
+
+            dgvDiem.DataSource = dt.DefaultView;
         }
         private void btnTaiLai_Click(object sender, EventArgs e)
         {
-            dgvDiem.DataSource = diemService.GetByGiangVien(maGV);
+            LoadDiem();
         }
 
         private void btnThoat_Click(object sender, EventArgs e)
@@ -72,12 +91,20 @@ namespace QuanLySinhVienCSharp.Forms
 
         private void dgvLop_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
 
+            var row = dgvLop.Rows[e.RowIndex];
+
+            txtMaHP.Text = row.Cells["MaHP"].Value?.ToString();
+            cboHocKy.Text = row.Cells["HocKy"].Value?.ToString();
+            txtNamHoc.Text = row.Cells["NamHoc"].Value?.ToString();
+
+            LoadDiem();
         }
 
         private void btnXemDSLop_Click(object sender, EventArgs e)
         {
-            dgvLop.DataSource = gvService.GetLopPhuTrach(maGV);
+            LoadPhanCong();
 
             if (dgvLop.Rows.Count == 0)
             {
@@ -109,13 +136,35 @@ namespace QuanLySinhVienCSharp.Forms
                 decimal gk = decimal.Parse(txtGK.Text);
                 decimal ck = decimal.Parse(txtCK.Text);
 
-                bool kq = diemService.NhapDiem(
-                    txtMaSV.Text,
-                    txtMaHP.Text,
-                    hocKy,
-                    namHoc,
-                    cc, bt, gk, ck
-                );
+                if (cc < 0 || cc > 10 || bt < 0 || bt > 10 ||
+                    gk < 0 || gk > 10 || ck < 0 || ck > 10)
+                {
+                    MessageBox.Show("Điểm phải từ 0 đến 10!");
+                    return;
+                }
+
+                bool kq;
+
+                if (dgvDiem.CurrentRow != null)
+                {
+                    kq = diemService.SuaDiem(
+                        txtMaSV.Text,
+                        txtMaHP.Text,
+                        hocKy,
+                        namHoc,
+                        cc, bt, gk, ck
+                    );
+                }
+                else
+                {
+                    kq = diemService.NhapDiem(
+                        txtMaSV.Text,
+                        txtMaHP.Text,
+                        hocKy,
+                        namHoc,
+                        cc, bt, gk, ck
+                    );
+                }
 
                 if (kq)
                 {
@@ -140,10 +189,13 @@ namespace QuanLySinhVienCSharp.Forms
                 var confirm = MessageBox.Show("Bạn có chắc muốn xóa điểm của sinh viên này?", "Xác nhận", MessageBoxButtons.YesNo);
                 if (confirm == DialogResult.Yes)
                 {
-                    if (diemService.Delete(maSV, maHP)) // Đảm bảo DiemService đã có hàm Delete
+                    int hocKy = int.Parse(dgvDiem.CurrentRow.Cells["HocKy"].Value.ToString());
+                    string namHoc = dgvDiem.CurrentRow.Cells["NamHoc"].Value.ToString();
+
+                    if (diemService.XoaDiem(maSV, maHP, hocKy, namHoc))
                     {
                         MessageBox.Show("Xóa thành công!");
-                        dgvDiem.DataSource = diemService.GetByGiangVien(maGV);
+                        LoadDiem();
                     }
                 }
             }
@@ -182,7 +234,19 @@ namespace QuanLySinhVienCSharp.Forms
 
         private void dgvDiem_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex < 0) return;
 
+            var row = dgvDiem.Rows[e.RowIndex];
+
+            txtMaSV.Text = row.Cells["MaSV"].Value?.ToString();
+            txtMaHP.Text = row.Cells["MaHP"].Value?.ToString();
+            cboHocKy.Text = row.Cells["HocKy"].Value?.ToString();
+            txtNamHoc.Text = row.Cells["NamHoc"].Value?.ToString();
+
+            txtCC.Text = row.Cells["DiemChuyenCan"].Value?.ToString();
+            txtBT.Text = row.Cells["DiemBaiTap"].Value?.ToString();
+            txtGK.Text = row.Cells["DiemGiuaKy"].Value?.ToString();
+            txtCK.Text = row.Cells["DiemCuoiKy"].Value?.ToString();
         }
 
         private void cboHocKy_SelectedIndexChanged(object sender, EventArgs e)
@@ -191,17 +255,8 @@ namespace QuanLySinhVienCSharp.Forms
         }
         private void dgvDiem_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dgvDiem.CurrentRow == null) return;
-
-            txtMaSV.Text = dgvDiem.CurrentRow.Cells["MaSV"].Value.ToString();
-            txtMaHP.Text = dgvDiem.CurrentRow.Cells["MaHP"].Value.ToString();
-            cboHocKy.Text = dgvDiem.CurrentRow.Cells["HocKy"].Value.ToString();
-            txtNamHoc.Text = dgvDiem.CurrentRow.Cells["NamHoc"].Value.ToString();
-
-            txtCC.Text = dgvDiem.CurrentRow.Cells["DiemChuyenCan"].Value.ToString();
-            txtBT.Text = dgvDiem.CurrentRow.Cells["DiemBaiTap"].Value.ToString();
-            txtGK.Text = dgvDiem.CurrentRow.Cells["DiemGiuaKy"].Value.ToString();
-            txtCK.Text = dgvDiem.CurrentRow.Cells["DiemCuoiKy"].Value.ToString();
-        }
+           
+       
+    }
     }
 }

@@ -11,10 +11,10 @@ namespace QuanLySinhVienCSharp.Models
         public string TenDangNhap { get; set; }
         public string MatKhau { get; set; }
         public string VaiTro { get; set; }
-
         public string MaSV { get; set; }
         public string MaGV { get; set; }
-
-        public string TenNguoiDung { get; set; } // thêm
+        public string TenNguoiDung { get; set; }
+        public string MaKhoa { get; set; } // THÊM DÒNG NÀY
+        public bool TrangThai { get; set; } = true;
     }
 }
